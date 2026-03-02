@@ -1,0 +1,106 @@
+@import '../../../variables.less';
+
+.app {
+    background-color:  @backround;
+    width: 100%;
+}
+
+.body {
+    font-size: 1.2rem;
+
+    .rec-container {
+        display: grid;
+        border-bottom: 2px solid rgb(221, 221, 221);
+        padding-bottom: 1.5em;
+
+        .container {
+            font-size: 16px;
+            display: flex;
+            justify-content: space-between;
+            padding: 0.5em 0;
+
+            .card {
+                margin-top: 1em;
+                width: 21em;
+            }
+        }
+
+        .top {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-end;
+
+            .icon-container {
+                display: flex;
+
+                .icon {
+                    padding-top: 0.3em;
+                    width: 2em;
+                    transform: rotate(45deg);
+                }
+            }
+        }
+
+        .text {
+            font-family: @font-family-base;
+            padding-top: 0.5em;
+            color: @text-color;
+            cursor: pointer;
+            padding-right: 1em;
+            font-size: 1.5em;
+        }
+
+        .view-all {
+            font-size: 1em;
+            padding-right: 3em;
+        }
+    }
+
+    .best-seller-container {
+        display: flex;
+        align-items: flex-start;
+        width: 95%;
+        padding: 3em;
+        margin-top: 6em;
+        height: 20em;
+        overflow: hidden;
+
+        .best-seller-text {
+            display: grid;
+            padding-right: 5em;
+
+            .best-seller-title {
+                display: flex;
+                line-height: 2em;
+
+                .title-img {
+                    padding-top: 1em;
+                    width: 4em;
+                    height: 4em;
+                }
+
+                .title-text {
+                    font-family: @font-family-base;
+                    color: @text-color;
+                    margin-top: 1em;
+                    font-size: 2.3em;
+                }
+            }
+
+            .random-text {
+                padding-left: 0.5em;
+                display: grid;
+                align-items: start;
+                white-space: pre-wrap;
+                color: @pale-gray;
+                font-size: 1.5rem;
+                line-height: 1em;
+            }
+        }
+
+        .best-seller-img {
+            width: 40em;
+            transform: translateY(-12em);
+        }
+    }
+}

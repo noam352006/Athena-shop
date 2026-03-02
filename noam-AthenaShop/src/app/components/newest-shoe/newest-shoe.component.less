@@ -1,0 +1,86 @@
+@import '../../../variables.less';
+
+.newest-shoe-container {
+    display: flex;
+    align-items: flex-start;
+    font-family: @font-family-base;
+    color: @text-color;
+    border-bottom: 2px solid rgb(221, 221, 221);
+    width: 100%;
+    padding-top: 5%;
+
+
+    .text-container {
+        display: grid;
+        padding-top: 8em;
+        margin-left: 2em;
+
+        .title {
+            font-size: 2.3em;
+            padding-bottom: 1em;
+            line-height: 0.8em;
+        }
+
+        .invite {
+            font-family: @regular-lato;
+            color: @pale-gray;
+            white-space: pre-line;
+            padding-bottom: 1em;
+            font-size: 1em;
+            margin-left: 1em;
+        }
+
+        .buy-now-button {
+            font-size: 1em;
+            width: fit-content;
+            background-color: @text-color;
+            color: white;
+            padding: 0.5em 2.5em;
+            margin: 2em 0 3em 0;
+            border-radius: @button-radius;
+            cursor: pointer;
+        }
+
+        .buy-now-button:active {
+            transform: scale(1.1);
+        }
+
+        .buy-now-button:hover {
+            background-color: darken(@text-color, 10%);
+        }
+    }
+
+    .img-container {
+        position: relative;
+        overflow: hidden;
+        padding-left: 10em;
+        width: 100%;
+        height: 30em;
+
+        .shoe-img {
+            display: block;
+            transform: scaleX(-1) translateY(-3em);
+            width: 40em;
+        }
+
+        .shoe-name-container {
+            position: absolute;
+            top: 2.1em;
+            left: 9.3em;
+
+            font-size: 4em;
+
+            .shoe-name {
+                width: 500px;
+                transform: rotate(-90deg);
+                transform-origin: left-center;
+                overflow-wrap: break-word;
+                line-height: 1;
+
+                .brand-name {
+                    text-transform: uppercase;
+                }
+            }
+        }
+    }
+}

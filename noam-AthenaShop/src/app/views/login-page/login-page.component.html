@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html>
+<header>
+    <div class="container">
+        <div class="logo-container">
+            <app-logo></app-logo>
+        </div>
+    </div>
+</header>
+
+<body class="container">
+    <mat-tab-group *ngIf="!isLoading" class="options-container" mat-stretch-tabs="false" mat-align-tabs="start"
+        (selectedTabChange)="switchTab()">
+        <mat-tab label="LOG IN">
+            <form class="form" [formGroup]="form" (ngSubmit)="loginUser()">
+                <ng-template #formInputs let-loginMode="loginMode">
+                    <label for="userName" class="inputLabel">user name:</label>
+                    <input id="userName" class="input" type="text" formControlName="userName">
+                    <mat-error class="error-message"
+                        *ngIf="this.form.controls.userName.errors?.['required'] && this.form.controls.userName.dirty">
+                        this is a required field
+                    </mat-error>
+
+                    <div class="inputContainer">
+                        <label for="password" class="inputLabel">password:</label>
+                        <mat-icon *ngIf="this.form.controls.password.dirty" (click)="this.view = !this.view"
+                            class="icon" data-mat-icon-type="svg">
+                            <svg viewBox="0 0 512 512">
+                                <path [attr.d]="view ? onPath : offPath"></path>
+                            </svg>
+                        </mat-icon>
+                    </div>
+                    <input id="password" class="input" [type]="view ? 'text ': 'password'" formControlName="password">
+                    <mat-error class="error-message"
+                        *ngIf="this.form.controls.password.errors?.['required'] && this.form.controls.password.dirty">
+                        this is a required field
+                    </mat-error>
+                    <mat-error class="error-message"
+                        *ngIf="this.form.controls.password.errors?.['minlength'] && this.form.controls.password.dirty && !loginMode">
+                        password must have at least 6 characters
+                    </mat-error>
+
+                    <label *ngIf="this.form.controls.password.valid && !loginMode" for="passwordVer"
+                        class="inputLabel">verify
+                        password:</label>
+                    <input *ngIf="this.form.controls.password.valid && !loginMode" id="passwordVer" class="input"
+                        type="password" formControlName="passwordVerify">
+                    <mat-error class="error-message"
+                        *ngIf="this.form.controls.passwordVerify.errors?.['required'] && this.form.controls.passwordVerify.dirty">this
+                        is a required field
+                    </mat-error>
+                </ng-template>
+
+                <ng-container *ngTemplateOutlet="formInputs; context:{loginMode: true}"></ng-container>
+                <button class="submit-button" type="submit">LOG IN</button>
+                <mat-error class="error-message">{{loginError}}</mat-error>
+            </form>
+
+        </mat-tab>
+        <mat-tab label="SIGN UP">
+            <form class="form" [formGroup]="form" (ngSubmit)="signUpUser()">
+                <ng-container *ngTemplateOutlet="formInputs ; context:{loginMode: false}"></ng-container>
+                <button class="submit-button" type="submit">SIGN UP</button>
+                <mat-error class="error-message">
+                    {{signUpError}}
+                </mat-error>
+            </form>
+        </mat-tab>
+    </mat-tab-group>
+    <div class="spinner-container" *ngIf="isLoading">
+        <img class="spinner-img" src="../../../assets/athena-shop-logo.png">
+
+        <div class="spinner">
+            <mat-spinner diameter="223" strokeWidth="10"></mat-spinner>
+        </div>
+        <div class="spinner-small">
+            <mat-spinner diameter="120" strokeWidth="10"></mat-spinner>
+        </div>
+    </div>
+</body>
+
+</html>

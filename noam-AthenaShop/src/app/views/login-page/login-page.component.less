@@ -1,0 +1,90 @@
+@import '../../../variables.less';
+
+.container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.form {
+    display: grid;
+    font-weight: lighter;
+
+    .inputContainer {
+        position: relative;
+        margin-top: 4em;
+
+        .icon {
+            position: absolute;
+            right: 1em;
+            top: 90%;
+        }
+    }
+
+    .input {
+        border: none;
+        border-bottom: 1px solid @pale-gray;
+        outline: none;
+        padding: 0.5em;
+        font-size: large;
+    }
+
+    .inputLabel {
+        font-size: 120%;
+        color: @pale-gray;
+        margin: 3em 0 0 0;
+    }
+
+    .submit-button {
+        background-color: @text-color;
+        color: white;
+        border: none;
+        width: 100%;
+        padding: 3%;
+        margin-top: 3em;
+        margin-bottom: 1em;
+        font-size: large;
+    }
+
+    .submit-button:hover {
+        background-color: @pale-gray;
+    }
+
+    .error-message {
+        color: @athena-red;
+        font-weight: lighter;
+    }
+}
+
+.options-container {
+    display: flex;
+    color: @text-color;
+    white-space: pre-line;
+}
+
+.logo-container {
+    display: flex;
+    font-size: 350%;
+    justify-content: center;
+    margin-top: 5%;
+    width: 100%;
+    margin-bottom: 3%;
+}
+
+.spinner-container {
+    padding-top: 5em;
+
+    .spinner {
+        transform: translateY(-17.3em) translateX(1em);
+    }
+
+    .spinner-small {
+        transform: translateY(-29.5em) translateX(4.6em);
+    }
+
+    .spinner-img {
+        position: relative;
+        width: 18em;
+        z-index: 2;
+    }
+}

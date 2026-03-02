@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html class="app ">
+<header class="header">
+</header>
+
+<body class="body">
+    <div class="container">
+        <div class="title">Filter</div>
+        <mat-expansion-panel expanded>
+            <mat-expansion-panel-header>
+                <mat-panel-title class="title"> Size </mat-panel-title>
+            </mat-expansion-panel-header>
+            <div>
+                <div class="size-filter" *ngIf="currFilters$ | async as filter">
+                    <button *ngFor="let size of this.sizes" (click)="chooseSize(size)" class="size-button"
+                        [ngClass]="size === filter.size ? 'active' :  '' ">{{size}}
+                    </button>
+                </div>
+            </div>
+        </mat-expansion-panel>
+        <mat-expansion-panel expanded>
+            <mat-expansion-panel-header>
+                <mat-panel-title class="title"> Brand </mat-panel-title>
+            </mat-expansion-panel-header>
+            <div class="brand-filter">
+                <div class="select-form">
+                    <form [formGroup]="form">
+                        <mat-checkbox (click)="markCheckBox()" formControlName="all">
+                            All
+                        </mat-checkbox>
+                        <div formArrayName="selectedBrands">
+                            <div *ngFor="let _ of selectedBrands.controls; let i = index">
+                                <mat-checkbox [formControlName]="i">
+                                    {{ brandArray[i] }}
+                                </mat-checkbox>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </mat-expansion-panel>
+        <mat-expansion-panel expanded>
+            <mat-expansion-panel-header>
+                <mat-panel-title class="title"> Price </mat-panel-title>
+            </mat-expansion-panel-header>
+            <div> <app-slider></app-slider></div>
+        </mat-expansion-panel>
+    </div>

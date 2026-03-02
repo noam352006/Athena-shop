@@ -1,0 +1,115 @@
+/* You can add global styles to this file, and also import other style files */
+@import '@angular/material/prebuilt-themes/indigo-pink.css';
+@import './variables.less';
+
+//------------------------ TABS-----------------------
+.mat-tab-group {
+  .mat-ink-bar.mat-ink-bar {
+    background-color: @athena-red ;
+  }
+}
+
+//------------------------ CHECK BOXS-----------------------
+.mat-checkbox-frame {
+  border: none !important;
+  box-shadow: none !important;
+}
+
+.mat-checkbox-background,
+.mat-checkbox-inner-container .mat-checkbox-inner-container {
+  border-radius: 5px !important;
+  background-color: white
+}
+
+.mat-checkbox-label {
+  padding-top: 0.4em;
+  padding-left: 0.3em;
+  font-size: 1rem;        
+}
+
+&.mat-checkbox-checked {
+  .mat-checkbox-background {
+    background-color: @athena-red !important;
+    width: 1.5em;
+    height: 1.5em;
+  }
+}
+
+.mat-checkbox-checkmark {
+  transform: scale(0.7);
+  transform-origin: center;
+}
+
+//------------------------ SLIDER----------------------------
+ngx-slider .ngx-slider-bar {
+  background-color: #e0e0e0 !important;
+}
+
+ngx-slider .ngx-slider-selection {
+  background-color: @athena-red !important;
+}
+
+ngx-slider .ngx-slider-pointer {
+  margin-top: 10px;
+  background-color: @athena-red !important;
+  border: 3px solid #fff !important;
+  width: 6px !important;
+  height: 6px !important;
+  border-radius: 50% !important;
+  box-shadow: none !important;
+}
+
+ngx-slider .ngx-slider-pointer:after {
+  display: none;
+}
+
+ngx-slider .ngx-slider-pointer:hover,
+ngx-slider .ngx-slider-pointer.active {
+  border: none;
+}
+
+.ngx-slider-pointer:focus,
+.ngx-slider-pointer:active {
+  outline: 1px solid @pale-gray;
+  box-shadow: none;
+}
+
+//------------------------EXPANTION (FILTERS)----------------------------
+.mat-expansion-panel {
+  background: transparent !important;
+  box-shadow: none !important;
+  margin-bottom: 16px !important;
+}
+
+.mat-expansion-panel-header {
+  background: transparent !important;
+  padding: 0px !important;
+}
+
+.mat-expansion-panel-body {
+  background: transparent !important;
+  padding: 0px !important;
+}
+
+.mat-expansion-panel .mat-ripple-element {
+  background: transparent !important;
+}
+
+.mat-expansion-panel-header .mat-panel-description .mat-icon {
+  color: inherit !important;
+}
+
+//------------------------ SELECT----------------------------
+.mat-select-value {
+  color: @pale-gray !important;
+}
+
+.mat-option {
+  color: @pale-gray !important;
+}
+
+//------------------------ SPINNER----------------------------
+.mat-progress-spinner circle, .mat-spinner circle {
+    stroke: @athena-red !important;
+    z-index: 0 !important;
+}

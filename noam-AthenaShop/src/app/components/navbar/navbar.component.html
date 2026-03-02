@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html>
+
+<nav class="container">
+    <div class="bar-container">
+        <div routerLink="" class="logo-container">
+            <app-logo></app-logo>
+        </div>
+        <div routerLink="/shop" routerLinkActive="active-link" class="link"> shop </div>
+    </div>
+    <div class="bar-container">
+        <p class="link">Hi {{connectedUser.userName}}!</p>
+        <button mat-button class="menu-button" [matMenuTriggerFor]="menu">
+            <mat-icon class="menu-icon userName" data-mat-icon-type="svg">
+                <svg focusable="false" viewBox="0 0 24 24">
+                    <path d="M3 18h18v-2H3v2zm0-5h18v-2H3v2zm0-7v2h18V6H3z"></path>
+                </svg>
+            </mat-icon>
+        </button>
+        <mat-menu #menu="matMenu" class="mat-menu">
+            <div class="menu">
+                <button mat-button class="logout-button" (click)="logOut()">Log out</button>
+                <button mat-button class="logout-button">stay connected<output></output></button>
+            </div>
+        </mat-menu>
+    </div>
+</nav>

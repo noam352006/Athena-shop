@@ -1,0 +1,8 @@
+<div class="range-slider-wrapper" *ngIf="currFilters$ | async as f">
+  <ngx-slider
+    [(value)]="f.minPrice"
+    [(highValue)]="f.maxPrice"
+    [options]="options"
+    (userChangeEnd)="onUserChange($event)">
+  </ngx-slider>
+</div>

@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html class="app ">
+<header class="header">
+    <app-navbar></app-navbar>
+</header>
+
+<body class="body">
+    <app-newest-shoe *ngIf="newestShoe | async as newest" (goToShop)="navigateToShop()" [currShoe]="newest"></app-newest-shoe>
+
+    <div class="rec-container ">
+        <div class="top">
+            <div class="icon-container">
+                <img class="icon" src="../../../assets/sneakers.svg">
+                <div class="text">TOP picks for you</div>
+            </div>
+            <div class="text view-all " (click)="navigateToShop()">View all -></div>
+        </div>
+        <div class="container">
+            <div class="card" *ngFor="let shoe of this.recommendedShoes | async">
+                <app-shoe-card [currShoe]="shoe" [isInMainPage]="true" (clickedPurchase)="purchase(shoe)"></app-shoe-card>
+            </div>
+        </div>
+    </div>
+    <div class="best-seller-container">
+        <div class="best-seller-text">
+            <div class="best-seller-title">
+                <img class="title-img" src="../../../assets/athena-shop-logo.png">
+                <div class="title-text">About Athena Shop</div>
+            </div>
+            <div class="random-text">
+                {{text}}
+            </div>
+        </div>
+        <img class="best-seller-img" [src]="this.bestSeller.shoe.imgUrl">
+    </div>
+</body>
+
+</html>

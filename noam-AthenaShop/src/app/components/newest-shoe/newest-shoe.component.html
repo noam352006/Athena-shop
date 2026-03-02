@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html class="app ">
+
+<body class="body">
+    <div class="newest-shoe-container">
+        <div class="text-container">
+            <div class="title">Try Something New</div>
+            <div class="invite">{{text}}</div>
+            <button class="buy-now-button" (click)="onClick()">Buy Now</button>
+        </div>
+        <div>
+            <div class="img-container">
+                <div class="shoe-name-container">
+                    <div class="shoe-name">
+                    </div>
+                    <div class="shoe-name">
+                        <div class="brand-name">
+                            {{this.currShoe!.shoe.brand[this.currShoe!.shoe.brand.length - 1]}}
+                        </div>
+                        {{ this.currShoe!.shoe.model}}
+                    </div>
+                </div>
+                <img class="shoe-img" [src]="this.currShoe!.shoe.imgUrl">
+            </div>
+        </div>
+    </div>
+</body>
+
+</html>

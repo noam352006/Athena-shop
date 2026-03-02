@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html>
+
+<body class="container">
+    <div class="img-container">
+        <img class="image" [src]="currShoe.shoe.imgUrl">
+    </div>
+    <div class="data-container">
+        <div class="name">
+            <span *ngFor="let brand of currShoe.shoe.brand">{{brand}} </span>
+            <span class="shoe-model">{{currShoe.shoe.model}}</span>
+        </div>
+
+        <div class="size-container">
+            <button *ngFor="let num of sizes" class="size-button">
+                {{num}}
+            </button>
+        </div>
+
+        <div class="rating-container">
+            <mat-menu #menu="matMenu">
+                    <div class="menu" (click)="$event.stopPropagation()">
+                        <svg *ngFor="let num of stars" class="star-rate" [class.star-rate-chosen]="chosenStars >= num"
+                            (click)="rate(num)">
+                            <path d="M14.43 10 12 2l-2.43 8H2l6.18 4.41L5.83 22 12 17.31 18.18 22l-2.35-7.59L22 10z">
+                            </path>
+                        </svg>
+                    </div>
+                    <div class="button-container">
+                    <button class="button">save</button>
+                    <button class="button close" (click)="rate(0)">exit</button>
+                </div>
+            </mat-menu>
+            <button class="rating-Button" [disabled]="buttonState != 'purchased'" [matMenuTriggerFor]="menu" >
+                <img  class="star-icon" src="../../../assets/utils/Five_Pointed_Star_Solid.svg">
+            </button>
+
+            <div class="rating">{{currShoe.shoe.rating}}/5</div>
+        </div>
+        
+        <div class="bottom-card-container">
+            <button (click)="onPurchase()" class="purchase-button" [disabled]="buttonState === 'disabled' || buttonState === 'purchased'">
+                <mat-spinner *ngIf="buttonState === 'loading'" diameter="20"></mat-spinner>
+                <div *ngIf="buttonState != 'loading'">purchase</div>            </button>
+            <div [ngClass]="{'main-price':isInMainPage}" class="price">${{currShoe.shoe.price}}</div>
+        </div>
+    </div>
+</body>
+
+</html>

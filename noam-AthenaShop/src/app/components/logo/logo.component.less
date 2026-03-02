@@ -1,0 +1,25 @@
+@import '../../../variables.less';
+
+.logo-container {
+    display: flex;
+    align-items: center;
+    height: 100%;
+    font-family: @font-family-base;
+
+    .logo {
+       width: 1.5em;
+       height: auto;
+       display: block;
+    }
+    
+    .logo-text {
+        font-size: inherit;
+        line-height: 1;
+        align-items: center;
+    }
+}
+
+:host {
+    display: flex;
+    height: 100%;
+}

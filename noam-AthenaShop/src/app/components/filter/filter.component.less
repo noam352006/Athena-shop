@@ -1,0 +1,63 @@
+@import '../../../variables.less';
+@bottom-border: 1px solid rgb(230, 230, 230);
+
+.container {
+    display: grid;
+    width: 15em;
+    margin: 0.5em;
+
+    .title {
+        color: @text-color;
+        font-size: 1.3rem;
+        margin: 1em 0;
+    }
+
+    .size-filter {
+        padding-bottom: 1em;
+        font-family: @regular-lato;
+        border-bottom: @bottom-border;
+
+        .size-button {
+            border-radius: @button-radius;
+            width: 2.5em;
+            height: 2.5em;
+            margin: 0.5em 1em 0.5em 0;
+            border: 2px solid @pale-gray;
+            color: @pale-gray;
+            font-family: @regular-lato;
+            font-size: 1.2rem;
+            cursor: pointer;
+        }
+
+        .size-button:active {
+            transform: scale(1.05);
+        }
+
+        .size-button:hover {
+            color: white;
+            background-color: @text-color;
+            border-color: @text-color;
+        }
+
+        .active {
+            color: white;
+            background-color: @text-color;
+            border-color: @text-color;
+        }
+    }
+
+    .brand-filter {
+        margin-top: 1em;
+        border-bottom: @bottom-border;
+        margin: 0.5em;
+
+        .select-form {
+            padding-bottom: 2em;
+        }
+    }
+
+    .price-range {
+        margin-top: 1em;
+        border-bottom: @bottom-border;
+    }
+}
