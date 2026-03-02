@@ -1,9 +1,4 @@
-import {
-  Component,
-  EventEmitter,
-  Input,
-  Output,
-  SimpleChanges,
+import {Component, EventEmitter ,Input, Output, SimpleChanges,
 } from '@angular/core';
 import { ShoeItem } from 'src/app/shared/intrefaces/shoeItem';
 import { PopUpComponent } from '../pop-up/pop-up.component';
