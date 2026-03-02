@@ -27,7 +27,6 @@ import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { FormsModule } from '@angular/forms';
 import { SliderComponent } from './components/slider/slider.component';
 import { PopUpComponent } from './components/pop-up/pop-up.component';
-import { GraphQLModule } from './graphql.module';
 import { HttpClientModule } from '@angular/common/http';
 
 @NgModule({
@@ -63,7 +62,6 @@ import { HttpClientModule } from '@angular/common/http';
     FormsModule,
     MatSelectModule,
     MatProgressSpinnerModule,
-    GraphQLModule,
     HttpClientModule,
   ],
   providers: [],
