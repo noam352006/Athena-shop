@@ -33,6 +33,7 @@ import { APOLLO_OPTIONS } from 'apollo-angular';
 import { HttpLink } from 'apollo-angular/http';
 import { ApolloClientOptions, InMemoryCache, ApolloLink } from '@apollo/client/core';
 import { setContext } from '@apollo/client/link/context';
+import { ApolloModule } from 'apollo-angular';
  
 @NgModule({
   declarations: [
@@ -69,6 +70,7 @@ import { setContext } from '@apollo/client/link/context';
     MatProgressSpinnerModule,
     HttpClientModule,
     BrowserModule,
+    ApolloModule
   ],
     providers: [
     {

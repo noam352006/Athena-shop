@@ -24,10 +24,10 @@ export class ApolloService {
   logBasicShoeModels(): void {
     console.log('starting');
     this.apollo
-      .watchQuery<{ shoes: BasicShoe[] }>({ query: this.GET_ALL_MODELS })
+      .watchQuery<{  basic_shoe: BasicShoe[] }>({ query: this.GET_ALL_MODELS })
       .valueChanges.pipe(
         tap((result) => {
-          const shoes = result.data.shoes;
+          const shoes = result.data. basic_shoe;
           shoes.forEach((s) => console.log(s.model));
         }),
       ).subscribe();
