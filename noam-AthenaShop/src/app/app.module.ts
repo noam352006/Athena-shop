@@ -5,10 +5,10 @@ import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
 import { LoginPageComponent } from './views/login-page/login-page.component';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
-import { MatInputModule } from '@angular/material/input'
-import { MatFormFieldModule } from '@angular/material/form-field'
+import { MatInputModule } from '@angular/material/input';
+import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatTabsModule } from '@angular/material/tabs';
-import { MainPageComponent } from './views/main-page/main-page.component'
+import { MainPageComponent } from './views/main-page/main-page.component';
 import { MatIconModule } from '@angular/material/icon';
 import { NavbarComponent } from './components/navbar/navbar.component';
 import { LogoComponent } from './components/logo/logo.component';
@@ -16,7 +16,8 @@ import { MatDialogModule } from '@angular/material/dialog';
 import { MatMenuModule } from '@angular/material/menu';
 import { MatButtonModule } from '@angular/material/button';
 import { MatCheckboxModule } from '@angular/material/checkbox';
-import { NgxSliderModule } from '@angular-slider/ngx-slider'; import { ShopComponent } from './views/shop/shop.component';
+import { NgxSliderModule } from '@angular-slider/ngx-slider';
+import { ShopComponent } from './views/shop/shop.component';
 import { ShoeCardComponent } from './components/shoe-card/shoe-card.component';
 import { NewestShoeComponent } from './components/newest-shoe/newest-shoe.component';
 import { FilterComponent } from './components/filter/filter.component';
@@ -28,7 +29,10 @@ import { FormsModule } from '@angular/forms';
 import { SliderComponent } from './components/slider/slider.component';
 import { PopUpComponent } from './components/pop-up/pop-up.component';
 import { HttpClientModule } from '@angular/common/http';
-
+import { ApolloModule, APOLLO_OPTIONS } from 'apollo-angular';
+import { HttpLink } from 'apollo-angular/http';
+import { InMemoryCache } from '@apollo/client/core';
+ 
 @NgModule({
   declarations: [
     AppComponent,
@@ -63,8 +67,23 @@ import { HttpClientModule } from '@angular/common/http';
     MatSelectModule,
     MatProgressSpinnerModule,
     HttpClientModule,
+    BrowserModule,
+    ApolloModule,
   ],
-  providers: [],
-  bootstrap: [AppComponent]
+  providers: [
+      {
+        provide: APOLLO_OPTIONS,
+        useFactory: (httpLink: HttpLink) => {
+          return {
+            cache: new InMemoryCache(),
+            link: httpLink.create({
+              uri: 'https://helpful-crow-38.hasura.app/v1/graphql',
+            }),
+          };
+        },
+        deps: [HttpLink],
+      },
+    ],
+  bootstrap: [AppComponent],
 })
-export class AppModule { }
+export class AppModule {}

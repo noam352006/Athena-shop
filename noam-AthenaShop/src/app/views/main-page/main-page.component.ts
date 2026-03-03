@@ -2,6 +2,7 @@ import { Component } from '@angular/core';
 import { MainService } from 'src/app/services/main.service/main.service';
 import { ShoeItem } from 'src/app/shared/intrefaces/shoeItem';
 import { Observable } from 'rxjs';
+import { ApolloService } from 'src/app/services/apollo.service/apollo.service';
 
 @Component({
   selector: 'app-main-page',
@@ -10,7 +11,7 @@ import { Observable } from 'rxjs';
 })
 export class MainPageComponent {
 
-  constructor(private service: MainService) { }
+  constructor(private service: MainService, private aps: ApolloService) { }
 
   bestSeller: ShoeItem = this.service.getMostBought();
   newestShoe: Observable<ShoeItem> = this.service.getNewestShoe();
@@ -27,6 +28,11 @@ We believe every step tells a tale.Founded by passionate footwear enthusiasts, o
 
   navigateToShop(): void {
     this.service.navToShop();
+  }
+
+  pop(){
+    alert("hi");
+    this.aps.logBasicShoeModels()
   }
 
 }
