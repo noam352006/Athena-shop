@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import { Apollo, gql } from 'apollo-angular';
-import { map, Observable, tap } from 'rxjs';
+import { tap } from 'rxjs';
 import { BasicShoe } from 'src/app/shared/intrefaces/basicShoe';
 
 @Injectable({

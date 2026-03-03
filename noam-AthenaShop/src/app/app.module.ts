@@ -29,9 +29,10 @@ import { FormsModule } from '@angular/forms';
 import { SliderComponent } from './components/slider/slider.component';
 import { PopUpComponent } from './components/pop-up/pop-up.component';
 import { HttpClientModule } from '@angular/common/http';
-import { ApolloModule, APOLLO_OPTIONS } from 'apollo-angular';
+import { APOLLO_OPTIONS } from 'apollo-angular';
 import { HttpLink } from 'apollo-angular/http';
-import { InMemoryCache } from '@apollo/client/core';
+import { ApolloClientOptions, InMemoryCache, ApolloLink } from '@apollo/client/core';
+import { setContext } from '@apollo/client/link/context';
  
 @NgModule({
   declarations: [
@@ -68,22 +69,30 @@ import { InMemoryCache } from '@apollo/client/core';
     MatProgressSpinnerModule,
     HttpClientModule,
     BrowserModule,
-    ApolloModule,
   ],
-  providers: [
-      {
-        provide: APOLLO_OPTIONS,
-        useFactory: (httpLink: HttpLink) => {
-          return {
-            cache: new InMemoryCache(),
-            link: httpLink.create({
-              uri: 'https://helpful-crow-38.hasura.app/v1/graphql',
-            }),
-          };
-        },
-        deps: [HttpLink],
+    providers: [
+    {
+      provide: APOLLO_OPTIONS,
+      useFactory: (httpLink: HttpLink): ApolloClientOptions<any> => {
+
+        const http = httpLink.create({
+          uri: 'https://helpful-crow-38.hasura.app/v1/graphql',
+        });
+
+        const auth = setContext((_, { headers }) => ({
+          headers: {
+            ...headers,
+            'x-hasura-admin-secret': 'NU6VbveJ97irpguhPSWQtrXhhvFCq4kP75IKKkql3viL0zUO0HCDJZZecH8txTjU',
+          },
+        }));
+        return {
+          cache: new InMemoryCache(),
+          link: ApolloLink.from([auth, http]),
+        };
       },
-    ],
+      deps: [HttpLink],
+    },
+  ],
   bootstrap: [AppComponent],
 })
 export class AppModule {}
