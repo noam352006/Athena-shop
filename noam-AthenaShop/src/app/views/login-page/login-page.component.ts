@@ -36,16 +36,16 @@ export class LoginPageComponent {
     this.view = false;
   }
 
-  loginUser(): void {
+  async loginUser(): Promise<void> {
     if (this.form.invalid) {
       this.loginError = "*please check that your fields are valid";
     } else {
-      const currUser = this.loginService.findUser(this.form.controls.password.value!, this.form.controls.userName.value!);
+      const currUser = await this.loginService.getUserByCredentials(this.form.controls.password.value!, this.form.controls.userName.value!);
       if (!currUser) {
         this.loginError = "*user name or password are incorrect";
       } else {
         this.isLoading = true;
-        setTimeout(() => this.loginService.logInUser(currUser.password, currUser.userName), 2000);
+        setTimeout(() => this.loginService.connectUser(currUser), 2000);
 
       }
     }

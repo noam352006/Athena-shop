@@ -4,8 +4,11 @@ import { Query } from "@datorama/akita";
 import { countBy, entries, flatMap, maxBy } from "lodash";
 import { usersList } from "../../models/userList";
 import { Brands } from "../../enums/brand.enum";
-import { distinctUntilChanged, map, Observable, startWith } from "rxjs";
+import { distinctUntilChanged, map, Observable, of, startWith, switchMap } from "rxjs";
 import { User } from "../../intrefaces/user";
+import { ShoeItem } from "../../intrefaces/shoeItem";
+import { partialUser } from "../../intrefaces/partialUser";
+import { ApolloService } from "src/app/services/apollo.service/apollo.service";
 
 @Injectable({ providedIn: 'root' })
 export class AuthQuery extends Query<AuthState> {
@@ -15,7 +18,7 @@ export class AuthQuery extends Query<AuthState> {
     return !!this.getValue().connectedUser;
   }
 
-  get getCurrUser(): User | undefined{
+  get getCurrUser(): partialUser | undefined{
     return this.getValue().connectedUser;
   }
 
@@ -35,11 +38,12 @@ export class AuthQuery extends Query<AuthState> {
     return bestIds[0];
   }
 
-  constructor(protected override store: AuthStore) {
+  constructor(protected override store: AuthStore, private apollo: ApolloService
+  ) {
     super(store);
 
     this.favoriteBrand$ = this.select(state => state.connectedUser).pipe(
-      map(user => user?.purchaseHistory ?? []),
+      switchMap(user => this.apollo.getUserPurchases(user?.id!) ?? of([] as ShoeItem[])),
       map(purchases => {
         const brand = maxBy(
           Object.entries(
@@ -47,6 +51,7 @@ export class AuthQuery extends Query<AuthState> {
           ),
           ([, cnt]) => cnt)?.[0] ?? 'Adidas';
 
+        console.log(brand)
         return brand as Brands;
       }),
       startWith(Brands.Adidas),

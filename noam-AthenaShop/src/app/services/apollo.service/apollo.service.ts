@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import { Apollo, gql } from 'apollo-angular';
-import { map, Observable, tap } from 'rxjs';
+import { map, Observable, of, tap } from 'rxjs';
 import { BasicShoe } from 'src/app/shared/intrefaces/basicShoe';
 import { partialUser } from 'src/app/shared/intrefaces/partialUser';
 import { ShoeItem } from 'src/app/shared/intrefaces/shoeItem';
@@ -116,28 +116,57 @@ export class ApolloService {
   }
 
   getUserByInfo(
-    userPassword: string,
-    userName: string,
-  ): Observable<partialUser> {
-    return this.apollo
-      .watchQuery<{ users: partialUser }>({
-        query: this.GET_ALL_BASIC_SHOES,
-        variables: { passwors: userPassword, user_name: userName },
+  userPassword: string,
+  userName: string,
+): Observable<partialUser | null> {
+
+  console.log("fetching user password:", userPassword, "user:", userName);
+
+  return this.apollo
+    .watchQuery<{ users_by_pk: any }>({
+      query: this.GET_CONNECTED_USER,
+      variables: {
+        password: userPassword,
+        user_name: userName
+      },
+      fetchPolicy: 'network-only' // חשוב לדיבוג – מבטל cache
+    })
+    .valueChanges
+    .pipe(
+      map((result) => {
+        const user = result?.data?.users_by_pk;
+        if (!user) {
+          console.log("User not found");
+          return null;
+        }
+        const mappedUser: partialUser = {
+          id: user.id,
+          userName: user.user_name,
+          role: user.role,
+          dateCreated: user.date_created
+        };
+        console.log("Mapped User:", mappedUser);
+        return mappedUser;
       })
-      .valueChanges.pipe(map((result) => result.data.users));
-  }
+    );
+}
 
   getUserPurchases(userId: string): Observable<ShoeItem[]> {
-    return this.apollo
-      .watchQuery<{ purchases: {shoe_item: ShoeItem[]} }>({
-        query: this.GET_USER_PURCHASES,
-      })
-      .valueChanges.pipe(map((result) => result.data.purchases.shoe_item));
+    if (!userId) {
+      return of([] as ShoeItem[]);
+    } else {
+      return this.apollo
+        .watchQuery<{ purchases: { shoe_item: ShoeItem[] } }>({
+          query: this.GET_USER_PURCHASES,
+          variables: {id: userId}
+        })
+        .valueChanges.pipe(map((result) => result.data.purchases.shoe_item));
+    }
   }
 
-    getAllPurchases(userId: string): Observable<ShoeItem[]> {
+  getAllPurchases(userId: string): Observable<ShoeItem[]> {
     return this.apollo
-      .watchQuery<{ purchases: {shoe_item: ShoeItem[]} }>({
+      .watchQuery<{ purchases: { shoe_item: ShoeItem[] } }>({
         query: this.GET_USER_PURCHASES,
       })
       .valueChanges.pipe(map((result) => result.data.purchases.shoe_item));
