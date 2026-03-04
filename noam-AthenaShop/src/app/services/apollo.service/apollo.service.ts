@@ -2,8 +2,8 @@ import { Injectable } from '@angular/core';
 import { Apollo, gql } from 'apollo-angular';
 import { map, Observable, tap } from 'rxjs';
 import { BasicShoe } from 'src/app/shared/intrefaces/basicShoe';
+import { partialUser } from 'src/app/shared/intrefaces/partialUser';
 import { ShoeItem } from 'src/app/shared/intrefaces/shoeItem';
-import { User } from 'src/app/shared/intrefaces/user';
 
 @Injectable({
   providedIn: 'root',
@@ -53,20 +53,47 @@ export class ApolloService {
     }
   `;
 
-  GET_USER_PURCHASED_BRANDS = gql`
+  GET_USER_PURCHASES = gql`
     query getUserPurchasedBrands($id: uuid!) {
       purchases(where: { user_id: { _eq: $id } }) {
         shoe_item {
+          id
           shoe {
             brand
+            id
+            imgUrl
+            model
+            price
+            rating
           }
+          date_created
+          size
         }
       }
     }
-  `; 
+  `;
+
+  GET_PURCHASES = gql`
+    query getUserPurchasedBrands {
+      purchases {
+        shoe_item {
+          id
+          shoe {
+            brand
+            id
+            imgUrl
+            model
+            price
+            rating
+          }
+          date_created
+          size
+        }
+      }
+    }
+  `;
 
   logBasicShoeModels(): void {
-    console.log('starting');
     this.apollo
       .watchQuery<{ basic_shoe: BasicShoe[] }>({
         query: this.GET_ALL_BASIC_SHOES,
@@ -81,7 +108,6 @@ export class ApolloService {
   }
 
   getAllItems(): Observable<ShoeItem[]> {
-    console.log('starting');
     return this.apollo
       .watchQuery<{ shoe_item: ShoeItem[] }>({
         query: this.GET_ALL_ITEMS,
@@ -92,50 +118,68 @@ export class ApolloService {
   getUserByInfo(
     userPassword: string,
     userName: string,
-  ): Observable<Partial<User>> {
-    console.log('starting');
+  ): Observable<partialUser> {
     return this.apollo
-      .watchQuery<{ users: Partial<User> }>({
+      .watchQuery<{ users: partialUser }>({
         query: this.GET_ALL_BASIC_SHOES,
         variables: { passwors: userPassword, user_name: userName },
       })
       .valueChanges.pipe(map((result) => result.data.users));
   }
 
-  getUserPurchases() {}
+  getUserPurchases(userId: string): Observable<ShoeItem[]> {
+    return this.apollo
+      .watchQuery<{ purchases: {shoe_item: ShoeItem[]} }>({
+        query: this.GET_USER_PURCHASES,
+      })
+      .valueChanges.pipe(map((result) => result.data.purchases.shoe_item));
+  }
+
+    getAllPurchases(userId: string): Observable<ShoeItem[]> {
+    return this.apollo
+      .watchQuery<{ purchases: {shoe_item: ShoeItem[]} }>({
+        query: this.GET_USER_PURCHASES,
+      })
+      .valueChanges.pipe(map((result) => result.data.purchases.shoe_item));
+  }
 
   //---------------mutation--------------------
 
   SIGN_UP = gql`
-  mutation getUserByLogin($password: String!, $user_name: String!) {
-  insert_users_one(object:{ password: $password, user_name: $user_name}) {
-    id
-    user_name
-    date_created
-  }
-}
-`;
+    mutation getUserByLogin($password: String!, $user_name: String!) {
+      insert_users_one(object: { password: $password, user_name: $user_name }) {
+        id
+        user_name
+        date_created
+      }
+    }
+  `;
 
-PURCHASE_ITEM = gql`
-mutation purchaseShoe($user_id: uuid!, $shoe_id: uuid!){
-  insert_purchases_one(object:{user_id: $user_id, item_id: $shoe_id}){
-    user_id
-    item_id
-    purchase_date
-  }
-}`;
+  PURCHASE_ITEM = gql`
+    mutation purchaseShoe($user_id: uuid!, $shoe_id: uuid!) {
+      insert_purchases_one(object: { user_id: $user_id, item_id: $shoe_id }) {
+        user_id
+        item_id
+        purchase_date
+      }
+    }
+  `;
 
-  signInUser(userPassword: string, userName: string):void  {
-    this.apollo.mutate({
-      mutation: this.SIGN_UP, 
-      variables: { passwors: userPassword, user_name: userName },
-    }).subscribe();
+  signInUser(userPassword: string, userName: string): void {
+    this.apollo
+      .mutate({
+        mutation: this.SIGN_UP,
+        variables: { passwors: userPassword, user_name: userName },
+      })
+      .subscribe();
   }
 
-  purchaseShoe(userId: string, itemID: string){
-      this.apollo.mutate({
-      mutation: this.SIGN_UP, 
-      variables: {user_id: userId, shoe_id: itemID },
-    }).subscribe();
+  purchaseShoe(userId: string, itemID: string) {
+    this.apollo
+      .mutate({
+        mutation: this.SIGN_UP,
+        variables: { user_id: userId, shoe_id: itemID },
+      })
+      .subscribe();
   }
 }

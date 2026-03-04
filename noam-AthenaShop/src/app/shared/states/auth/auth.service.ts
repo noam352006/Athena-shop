@@ -3,12 +3,13 @@ import { AuthStore } from "./auth.store";
 import { User } from "../../intrefaces/user";
 import { AuthQuery } from "./auth.query";
 import { ShoeItem } from "../../intrefaces/shoeItem";
+import { partialUser } from "../../intrefaces/partialUser";
 
 @Injectable({ providedIn: 'root' })
 export class AuthService {
     constructor(private store: AuthStore, private authQuery: AuthQuery) { }
 
-    logIn(user: User): void {
+    logIn(user: partialUser): void {
         this.store.update({ connectedUser: user });
     }
 
@@ -16,8 +17,8 @@ export class AuthService {
         this.store.update({ connectedUser: undefined });
     }
 
-    purchase(newShoe: ShoeItem): void {
-        this.store.update(state => {
+    purchase(newShoe: ShoeItem): void {}
+        /*this.store.update(state => {
             const user = state.connectedUser;
             if (!user) {
                 return {};
@@ -35,5 +36,5 @@ export class AuthService {
                 }
             };
         });
-    }
+    }*/
 }

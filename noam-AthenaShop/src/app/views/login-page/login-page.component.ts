@@ -45,7 +45,7 @@ export class LoginPageComponent {
         this.loginError = "*user name or password are incorrect";
       } else {
         this.isLoading = true;
-        setTimeout(() => this.loginService.logInUser(currUser), 2000);
+        setTimeout(() => this.loginService.logInUser(currUser.password, currUser.userName), 2000);
 
       }
     }

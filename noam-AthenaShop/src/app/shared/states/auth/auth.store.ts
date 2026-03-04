@@ -1,9 +1,9 @@
 import { Store, StoreConfig } from "@datorama/akita";
-import { User } from "../../intrefaces/user";
 import { Injectable } from "@angular/core";
+import { partialUser } from "../../intrefaces/partialUser";
 
 export interface AuthState {
-    connectedUser: User | undefined
+    connectedUser: partialUser | undefined
 }
 
 export function createIntialState(): AuthState {
