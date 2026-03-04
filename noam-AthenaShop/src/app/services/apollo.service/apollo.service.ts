@@ -19,7 +19,7 @@ export class ApolloService {
         id
         model
         price
-        rate
+        rating
       }
     }
   `;
@@ -34,7 +34,7 @@ export class ApolloService {
           imgUrl
           model
           price
-          rate
+          rating
         }
         date_created
         size
@@ -80,11 +80,11 @@ export class ApolloService {
       .subscribe();
   }
 
-  getAllItems(userPassword: string, userName: string): Observable<ShoeItem[]> {
+  getAllItems(): Observable<ShoeItem[]> {
     console.log('starting');
     return this.apollo
       .watchQuery<{ shoe_item: ShoeItem[] }>({
-        query: this.GET_ALL_BASIC_SHOES,
+        query: this.GET_ALL_ITEMS,
       })
       .valueChanges.pipe(map((result) => result.data.shoe_item));
   }

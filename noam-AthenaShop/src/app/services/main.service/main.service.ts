@@ -1,9 +1,10 @@
 import { Injectable } from '@angular/core';
 import { Router } from '@angular/router';
+import moment from 'moment';
 import { combineLatest, map, Observable, switchMap } from 'rxjs';
 import { Brands } from 'src/app/shared/enums/brand.enum';
+import { BasicShoe } from 'src/app/shared/intrefaces/basicShoe';
 import { ShoeItem } from 'src/app/shared/intrefaces/shoeItem';
-import { init } from 'src/app/shared/models/shoeItems';
 import { AuthQuery } from 'src/app/shared/states/auth/auth.query';
 import { AuthService } from 'src/app/shared/states/auth/auth.service';
 import { ShoeItemQuery } from 'src/app/shared/states/shoeItems/shoe-item.query';
@@ -66,8 +67,28 @@ export class MainService {
     );
   }
 
+
+  sshoe: BasicShoe = {
+            id: "0",
+            brand: [Brands.Adidas, Brands.Yeezy],
+            model: "350 BELUGA",
+            rating: 3,
+            price: 55,
+            imgUrl: "../../../assets/items/adidas_yeezy_350_beluga.png"
+        };
+
+
+
+  shoe: ShoeItem =  {
+    id: "1",
+    shoe: this.sshoe,
+    dateCreated: new Date(),
+    datePurchased: undefined,
+    size: 7.5,
+  };
+
   getMostBought(): ShoeItem {
-    return this.shoeQuery.getShoeById(this.authQuery.getBestSeller()) ?? init[0];
+    return this.shoeQuery.getShoeById(this.authQuery.getBestSeller()) ?? this.shoe;
   }
 
   close(filter: string): void {

@@ -1,16 +1,26 @@
+
+/*
+import { Brands } from "../enums/brand.enum";
 import { ShoeItem } from "../intrefaces/shoeItem";
 import { basicShoesList } from "./basicShoes";
-
 const moment = require('moment');
 
 export const init: ShoeItem[] = [
   {
     id: "1",
-    shoe: basicShoesList[0],
+    shoe:  {
+            id: "0",
+            brand: [Brands.Adidas, Brands.Yeezy],
+            model: "350 BELUGA",
+            rating: 3,
+            price: 55,
+            imgUrl: "../../../assets/items/adidas_yeezy_350_beluga.png"
+        },
     dateCreated: moment('2024-03-12T08:17:45.321Z'),
     datePurchased: undefined,
     size: 7.5,
-  },
+  }]
+
   {
     id: "2",
     shoe: basicShoesList[1],
@@ -265,4 +275,4 @@ export const init: ShoeItem[] = [
     datePurchased: moment(),
     size: 5.5,
   },
-];
+];*/
