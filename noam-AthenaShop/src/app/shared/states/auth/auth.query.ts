@@ -5,7 +5,6 @@ import { countBy, entries, flatMap, maxBy } from "lodash";
 import { usersList } from "../../models/userList";
 import { Brands } from "../../enums/brand.enum";
 import { distinctUntilChanged, map, Observable, of, startWith, switchMap } from "rxjs";
-import { User } from "../../intrefaces/user";
 import { ShoeItem } from "../../intrefaces/shoeItem";
 import { partialUser } from "../../intrefaces/partialUser";
 import { ApolloService } from "src/app/services/apollo.service/apollo.service";
