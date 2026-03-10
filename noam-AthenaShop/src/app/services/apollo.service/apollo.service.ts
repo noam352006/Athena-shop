@@ -155,20 +155,20 @@ export class ApolloService {
       return of([] as ShoeItem[]);
     } else {
       return this.apollo
-        .watchQuery<{ purchases: { shoe_item: ShoeItem[] } }>({
+        .watchQuery<{ purchases: { shoe_item: ShoeItem[] }[] }>({
           query: this.GET_USER_PURCHASES,
           variables: { id: userId },
         })
-        .valueChanges.pipe(map((result) => result.data.purchases.shoe_item));
+        .valueChanges.pipe(map((result) => result.data.purchases.flatMap(p => p.shoe_item) ?? []));
     }
   }
 
   getAllPurchases(): Observable<ShoeItem[]> {
     return this.apollo
-      .watchQuery<{ purchases: { shoe_item: ShoeItem[] } }>({
+      .watchQuery<{ purchases: { shoe_item: ShoeItem[] }[] }>({
         query: this.GET_PURCHASES,
       })
-      .valueChanges.pipe(map((result) => result.data.purchases.shoe_item));
+      .valueChanges.pipe(map((result) => result.data.purchases.flatMap(p => p.shoe_item) ?? []));
   }
 
   getUserByName(

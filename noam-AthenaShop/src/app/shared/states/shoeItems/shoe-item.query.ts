@@ -81,6 +81,7 @@ export class ShoeItemQuery extends QueryEntity<ShoeItemState> {
     getBestSeller(): Observable<string> {
       return this.apollo.getAllPurchases().pipe(
         map(purchases => {
+            console.log(purchases)
           const counts = countBy(purchases, p => p.shoe.id);
           const best = maxBy(Object.entries(counts), ([, c]) => c);
           return best?.[0] ?? 'ba636325-494f-49eb-a48b-1f0c18df38cd';
