@@ -6,7 +6,6 @@ import { Router } from '@angular/router';
 import { ApolloService } from '../apollo.service/apollo.service';
 import { firstValueFrom, tap } from 'rxjs';
 import { partialUser } from 'src/app/shared/intrefaces/partialUser';
-import { promises } from 'dns';
 
 @Injectable({
   providedIn: 'root',
@@ -18,23 +17,31 @@ export class LoginService {
     private apollo: ApolloService,
   ) {}
 
-  doesNameExists(name: string): User | undefined {
-    return usersList.find((user) => user.userName === name);
+  async doesNameExists(name: string): Promise<boolean> {
+     const searchesUserName = await firstValueFrom(
+      this.apollo.getUserByName(name),
+    );
+    console.log("checking if userName exists, result: " + searchesUserName)
+ 
+    return searchesUserName? true : false
   }
 
   // get user from dadta base with password and user name
- async getUserByCredentials(password: string, userName: string): Promise<partialUser | null> {
-  try {
-    const user$ = this.apollo.getUserByInfo(password, userName); // Observable<User>
-    const user = await firstValueFrom(user$);
-    return user;
-  } catch (err) {
-    console.error(err);
-    return null;
+  async getUserByCredentials(
+    password: string,
+    userName: string,
+  ): Promise<partialUser | null> {
+    try {
+      const user$ = this.apollo.getUserByInfo(password, userName); // Observable<User>
+      const user = await firstValueFrom(user$);
+      return user;
+    } catch (err) {
+      console.error(err);
+      return null;
+    }
   }
-}
 
-  //if user exists log them in 
+  //if user exists log them in
   connectUser(user: partialUser): void {
     if (!user) {
     } else {
@@ -51,8 +58,16 @@ export class LoginService {
     );
   }
 
-  addUser(password: string, userName: string): void {
-   this.apollo.signInUser(password, userName)
+  async addUser(password: string, userName: string): Promise<void> {
+    const newUser = await firstValueFrom(
+      this.apollo.signInUser(password, userName),
+    );
+    if (!newUser) {
+      console.error('somthing went wrong');
+    } else {
+      console.log( 'created new user with user name: ' + newUser?.userName + ' at ' + newUser?.dateCreated);
+      this.connectUser(newUser);
+    }
   }
 
   logOut(): void {

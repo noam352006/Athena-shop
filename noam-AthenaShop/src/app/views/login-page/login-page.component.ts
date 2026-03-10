@@ -51,14 +51,14 @@ export class LoginPageComponent {
     }
   }
 
-  signUpUser(): void {
+  async signUpUser(): Promise<void> {
     if (this.form.invalid) {
       this.signUpError = "*please check that your fields are valid";
     } else {
       if (this.form.controls.password.value !== this.form.controls.passwordVerify.value) {
         this.signUpError = "*password verification failed";
       } else {
-        if (this.loginService.doesNameExists(this.form.controls.userName.value!)) {
+        if ( await this.loginService.doesNameExists(this.form.controls.userName.value!)) {
           this.signUpError =
             `*this user name already exists,
             please choose another`;

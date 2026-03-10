@@ -1,5 +1,6 @@
 import { Injectable } from '@angular/core';
 import { Apollo, gql } from 'apollo-angular';
+import { result } from 'lodash';
 import { map, Observable, of, tap } from 'rxjs';
 import { BasicShoe } from 'src/app/shared/intrefaces/basicShoe';
 import { partialUser } from 'src/app/shared/intrefaces/partialUser';
@@ -93,6 +94,12 @@ export class ApolloService {
     }
   `;
 
+  GET_USER_BY_NAME= gql`query getUserByName($user_name: String!){
+  users(where: {user_name: {_eq: $user_name}}){
+    user_name
+  }
+}`
+
   logBasicShoeModels(): void {
     this.apollo
       .watchQuery<{ basic_shoe: BasicShoe[] }>({
@@ -116,40 +123,37 @@ export class ApolloService {
   }
 
   getUserByInfo(
-  userPassword: string,
-  userName: string,
-): Observable<partialUser | null> {
+    userPassword: string,
+    userName: string,
+  ): Observable<partialUser | null> {
+    console.log('fetching user password:', userPassword, 'user:', userName);
 
-  console.log("fetching user password:", userPassword, "user:", userName);
-
-  return this.apollo
-    .watchQuery<{ users_by_pk: any }>({
-      query: this.GET_CONNECTED_USER,
-      variables: {
-        password: userPassword,
-        user_name: userName
-      },
-      fetchPolicy: 'network-only' // חשוב לדיבוג – מבטל cache
-    })
-    .valueChanges
-    .pipe(
-      map((result) => {
-        const user = result?.data?.users_by_pk;
-        if (!user) {
-          console.log("User not found");
-          return null;
-        }
-        const mappedUser: partialUser = {
-          id: user.id,
-          userName: user.user_name,
-          role: user.role,
-          dateCreated: user.date_created
-        };
-        console.log("Mapped User:", mappedUser);
-        return mappedUser;
+    return this.apollo
+      .watchQuery<{ users_by_pk: any }>({
+        query: this.GET_CONNECTED_USER,
+        variables: {
+          password: userPassword,
+          user_name: userName,
+        },
+        fetchPolicy: 'network-only', // חשוב לדיבוג – מבטל cache
       })
-    );
-}
+      .valueChanges.pipe(
+        map((result) => {
+          const user = result?.data?.users_by_pk;
+          if (!user) {
+            console.log('User not found');
+            return null;
+          }
+          const mappedUser: partialUser = {
+            id: user.id,
+            userName: user.user_name,
+            role: user.role,
+            dateCreated: user.date_created,
+          };
+          return mappedUser;
+        }),
+      );
+  }
 
   getUserPurchases(userId: string): Observable<ShoeItem[]> {
     if (!userId) {
@@ -158,7 +162,7 @@ export class ApolloService {
       return this.apollo
         .watchQuery<{ purchases: { shoe_item: ShoeItem[] } }>({
           query: this.GET_USER_PURCHASES,
-          variables: {id: userId}
+          variables: { id: userId },
         })
         .valueChanges.pipe(map((result) => result.data.purchases.shoe_item));
     }
@@ -172,6 +176,31 @@ export class ApolloService {
       .valueChanges.pipe(map((result) => result.data.purchases.shoe_item));
   }
 
+  getUserByName(
+    userName: string,
+  ): Observable<string | null> {
+
+    return this.apollo
+      .watchQuery<{ users: {user_name : string}[] }>({
+        query: this.GET_USER_BY_NAME,
+        variables: {
+          user_name: userName,
+        },
+        fetchPolicy: 'network-only', // חשוב לדיבוג – מבטל cache
+      })
+      .valueChanges.pipe(
+        map((result) => {
+          const user = result?.data?.users[0];
+          if (!user) {
+            console.log('userName does not exist');
+            return null;
+          }
+          return user.user_name;
+        }),
+      );
+    }
+
+    
   //---------------mutation--------------------
 
   SIGN_UP = gql`
@@ -179,6 +208,7 @@ export class ApolloService {
       insert_users_one(object: { password: $password, user_name: $user_name }) {
         id
         user_name
+        role
         date_created
       }
     }
@@ -194,13 +224,32 @@ export class ApolloService {
     }
   `;
 
-  signInUser(userPassword: string, userName: string): void {
-    this.apollo
-      .mutate({
+  signInUser(
+    userPassword: string,
+    userName: string,
+  ): Observable<partialUser | undefined> {
+    return this.apollo
+      .mutate<{ insert_users_one: any }>({
         mutation: this.SIGN_UP,
-        variables: { passwors: userPassword, user_name: userName },
+        variables: { password: userPassword, user_name: userName },
       })
-      .subscribe();
+      .pipe(
+        map((r) => {
+          const user = r?.data?.insert_users_one;
+          if (user) {
+            const mappedUser: partialUser = {
+              id: user.id,
+              userName: user.user_name,
+              role: user.role,
+              dateCreated: user.date_created,
+            };
+
+            return mappedUser;
+          } else {
+            return undefined
+          }
+        }),
+      );
   }
 
   purchaseShoe(userId: string, itemID: string) {
