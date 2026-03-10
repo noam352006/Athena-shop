@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component } from '@angular/core';
 import { MainService } from 'src/app/services/main.service/main.service';
 import { ShoeItem } from 'src/app/shared/intrefaces/shoeItem';
 import { Observable, tap } from 'rxjs';
@@ -10,12 +10,12 @@ import { BasicShoe } from 'src/app/shared/intrefaces/basicShoe';
   templateUrl: './main-page.component.html',
   styleUrls: ['./main-page.component.less']
 })
-export class MainPageComponent implements OnInit{
+export class MainPageComponent {
 
   constructor(private service: MainService, private aps: ApolloService) { }
 
-  bestSeller$!: Observable<BasicShoe | undefined>;
-  newestShoe: Observable<ShoeItem> = this.service.getNewestShoe();
+  bestSeller$: Observable<BasicShoe | undefined> = this.service.getMostBought();
+  newestShoe$: Observable<ShoeItem | null> = this.service.getNewestShoe();
   recommendedShoes: Observable<ShoeItem[]> = this.service.getTopSuggestionsForUser();
 
   text =
@@ -34,9 +34,4 @@ We believe every step tells a tale.Founded by passionate footwear enthusiasts, o
   pop(){
     alert("hi");
   }
-
-  ngOnInit(){
-    this.bestSeller$ = this.service.getMostBought();
-    this.bestSeller$.pipe(tap(shoe => console.log("this is the best selling shoe " + shoe?.imgUrl)))
-  }
-}
+ }

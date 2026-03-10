@@ -38,7 +38,7 @@ export class ApolloService {
           price
           rating
         }
-        date_created
+        dateCreated
         size
       }
     }
@@ -50,7 +50,7 @@ export class ApolloService {
         id
         user_name
         role
-        date_created
+        dateCreated
       }
     }
   `;
@@ -68,7 +68,7 @@ export class ApolloService {
             price
             rating
           }
-          date_created
+          dateCreated
           size
         }
       }
@@ -88,7 +88,7 @@ export class ApolloService {
             price
             rating
           }
-          date_created
+          dateCreated
           size
         }
       }
@@ -143,7 +143,7 @@ export class ApolloService {
             id: user.id,
             userName: user.user_name,
             role: user.role,
-            dateCreated: user.date_created,
+            dateCreated: user.dateCreated,
           };
           return mappedUser;
         }),
@@ -204,7 +204,7 @@ export class ApolloService {
         id
         user_name
         role
-        date_created
+        dateCreated
       }
     }
   `;
@@ -236,7 +236,7 @@ export class ApolloService {
               id: user.id,
               userName: user.user_name,
               role: user.role,
-              dateCreated: user.date_created,
+              dateCreated: user.dateCreated,
             };
 
             return mappedUser;

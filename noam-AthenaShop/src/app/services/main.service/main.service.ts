@@ -29,7 +29,7 @@ export class MainService {
     return this.shoeQuery.getAllShoes();
   }
 
-  getNewestShoe(): Observable<ShoeItem> {
+  getNewestShoe(): Observable<ShoeItem | null> {
     return this.shoeQuery.selectNewest();
   }
 
