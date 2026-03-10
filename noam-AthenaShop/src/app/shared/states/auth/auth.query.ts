@@ -1,8 +1,7 @@
 import { Injectable } from "@angular/core";
 import { AuthState, AuthStore } from "./auth.store";
 import { Query } from "@datorama/akita";
-import { countBy, entries, flatMap, maxBy } from "lodash";
-import { usersList } from "../../models/userList";
+import { countBy, flatMap, maxBy } from "lodash";
 import { Brands } from "../../enums/brand.enum";
 import { distinctUntilChanged, map, Observable, of, startWith, switchMap } from "rxjs";
 import { ShoeItem } from "../../intrefaces/shoeItem";
@@ -19,22 +18,6 @@ export class AuthQuery extends Query<AuthState> {
 
   get getCurrUser(): partialUser | undefined{
     return this.getValue().connectedUser;
-  }
-
-  getBestSeller(): string {
-    const counts = countBy(flatMap(usersList, u => u.purchaseHistory.map(p => p.id)));
-    const bestEntry = maxBy(entries(counts), ([, cnt]) => cnt) as [string, number] | undefined;
-
-    if (!bestEntry) {
-      return '';
-    }
-
-    const maxCount = bestEntry[1];
-    const bestIds = entries(counts)
-      .filter(([, cnt]) => cnt === maxCount)
-      .map(([id]) => id);
-
-    return bestIds[0];
   }
 
   constructor(protected override store: AuthStore, private apollo: ApolloService

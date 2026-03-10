@@ -4,11 +4,14 @@ import { ShoeItem } from "../../intrefaces/shoeItem";
 import { ShoeItemState, ShoeItemStore } from "./shoe-item.store";
 import { combineLatest, map, Observable } from "rxjs";
 import { FilterState } from "../../intrefaces/filterState";
+import { ApolloService } from "src/app/services/apollo.service/apollo.service";
+import { BasicShoe } from "../../intrefaces/basicShoe";
+import { countBy, maxBy } from "lodash";
 
 @Injectable({ providedIn: 'root' })
 export class ShoeItemQuery extends QueryEntity<ShoeItemState> {
 
-    constructor(protected override store: ShoeItemStore) {
+    constructor(protected override store: ShoeItemStore, private readonly apollo: ApolloService) {
         super(store);
     }
 
@@ -48,8 +51,9 @@ export class ShoeItemQuery extends QueryEntity<ShoeItemState> {
         return this.getAllShoes().filter(item => item.shoe.id === id);
     }
 
-    getShoeById(id: string): ShoeItem | undefined {
-        return this.getAll().find((currShoe) => currShoe.shoe.id === id)
+    getbasicShoeById(id: string): Observable<BasicShoe | undefined> {
+        const searchedShoe = this.apollo.getAllBasicShoes().pipe(map(shoes => shoes.find(shoe => shoe.id === id)))
+        return searchedShoe
     }
 
     selectAllShoes(): Observable<ShoeItem[]> {
@@ -72,5 +76,15 @@ export class ShoeItemQuery extends QueryEntity<ShoeItemState> {
 
     getShoeSizes(shoId: string): number[] {
         return this.selectByBasicShoe(shoId).map(s => s.size)
+    }
+
+    getBestSeller(): Observable<string> {
+      return this.apollo.getAllPurchases().pipe(
+        map(purchases => {
+          const counts = countBy(purchases, p => p.shoe.id);
+          const best = maxBy(Object.entries(counts), ([, c]) => c);
+          return best?.[0] ?? 'ba636325-494f-49eb-a48b-1f0c18df38cd';
+        })
+      );
     }
 }

@@ -1,7 +1,5 @@
 import { Injectable } from '@angular/core';
 import { AuthService } from 'src/app/shared/states/auth/auth.service';
-import { usersList } from 'src/app/shared/models/userList';
-import { User } from 'src/app/shared/intrefaces/user';
 import { Router } from '@angular/router';
 import { ApolloService } from '../apollo.service/apollo.service';
 import { firstValueFrom, tap } from 'rxjs';
@@ -49,13 +47,6 @@ export class LoginService {
       localStorage.setItem('connectedUser', JSON.stringify(user));
       this.router.navigate(['']);
     }
-  }
-
-  findUser(passwordInput: string, userNameInput: string): User | undefined {
-    return usersList.find(
-      (user) =>
-        user.password === passwordInput && user.userName === userNameInput,
-    );
   }
 
   async addUser(password: string, userName: string): Promise<void> {

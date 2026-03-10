@@ -21,6 +21,7 @@ export class ApolloService {
         model
         price
         rating
+        imgUrl
       }
     }
   `;
@@ -100,18 +101,12 @@ export class ApolloService {
   }
 }`
 
-  logBasicShoeModels(): void {
-    this.apollo
+  getAllBasicShoes(): Observable<BasicShoe[]> {
+    return this.apollo
       .watchQuery<{ basic_shoe: BasicShoe[] }>({
         query: this.GET_ALL_BASIC_SHOES,
       })
-      .valueChanges.pipe(
-        tap((result) => {
-          const shoes = result.data.basic_shoe;
-          shoes.forEach((s) => console.log(s.model));
-        }),
-      )
-      .subscribe();
+      .valueChanges.pipe(map((result) => result.data.basic_shoe));
   }
 
   getAllItems(): Observable<ShoeItem[]> {
@@ -168,10 +163,10 @@ export class ApolloService {
     }
   }
 
-  getAllPurchases(userId: string): Observable<ShoeItem[]> {
+  getAllPurchases(): Observable<ShoeItem[]> {
     return this.apollo
       .watchQuery<{ purchases: { shoe_item: ShoeItem[] } }>({
-        query: this.GET_USER_PURCHASES,
+        query: this.GET_PURCHASES,
       })
       .valueChanges.pipe(map((result) => result.data.purchases.shoe_item));
   }

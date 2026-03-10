@@ -5,8 +5,6 @@
 </header>
 
 <body class="body">
-    <app-newest-shoe *ngIf="newestShoe | async as newest" (goToShop)="navigateToShop()" [currShoe]="newest"></app-newest-shoe>
-
     <div class="rec-container ">
         <div class="top">
             <div class="icon-container">
@@ -16,7 +14,7 @@
             <div class="text view-all " (click)="navigateToShop()">View all -></div>
         </div>
         <div class="container">
-            <div class="card" *ngFor="let shoe of this.recommendedShoes | async">
+            <div class="card" *ngFor="let shoe of recommendedShoes | async">
                 <app-shoe-card [currShoe]="shoe" [isInMainPage]="true" (clickedPurchase)="purchase(shoe)"></app-shoe-card>
             </div>
         </div>
@@ -31,7 +29,9 @@
                 {{text}}
             </div>
         </div>
-        <img class="best-seller-img" [src]="this.bestSeller.shoe.imgUrl">
+        <div *ngIf="this.bestSeller$ | async as topShoe">
+        <img class="best-seller-img" [src]="topShoe.imgUrl">
+        </div>
     </div>
 </body>
 
