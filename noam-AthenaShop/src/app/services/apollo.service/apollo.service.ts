@@ -28,20 +28,24 @@ export class ApolloService {
 
   GET_ALL_ITEMS = gql`
     query getAllItems {
-      shoe_item {
-        id
-        shoe {
-          brand
-          id
-          imgUrl
-          model
-          price
-          rating
-        }
-        dateCreated
-        size
-      }
+  shoe_item {
+    id
+    shoe {
+      brand
+      id
+      imgUrl
+      model
+      price
+      rating
     }
+    purchase{
+      purchase_date
+    }
+    dateCreated
+    size
+  }
+}
+
   `;
 
   GET_CONNECTED_USER = gql`
@@ -111,10 +115,22 @@ export class ApolloService {
 
   getAllItems(): Observable<ShoeItem[]> {
     return this.apollo
-      .watchQuery<{ shoe_item: ShoeItem[] }>({
+      .watchQuery<{ shoe_item: any[] }>({
         query: this.GET_ALL_ITEMS,
       })
-      .valueChanges.pipe(map((result) => result.data.shoe_item));
+      .valueChanges.pipe(map((result) => {
+        const itemList = result.data.shoe_item;
+        return itemList.map(item => {
+          const mappedItem: ShoeItem = {
+            id: item.id,
+            datePurchased: item.purchase? item.purchase.purchase_date: undefined,
+            dateCreated: item.dateCreated,
+            size: item.size,
+            shoe: item.shoe
+          }
+          return mappedItem
+        })
+      }));
   }
 
   getUserByInfo(
@@ -248,10 +264,12 @@ export class ApolloService {
   }
 
   purchaseShoe(userId: string, itemID: string) {
+    console.log("apollo-service, purchasing shoe :)")
     this.apollo
       .mutate({
-        mutation: this.SIGN_UP,
+        mutation: this.PURCHASE_ITEM,
         variables: { user_id: userId, shoe_id: itemID },
+        refetchQueries:[this.GET_PURCHASES]
       })
       .subscribe();
   }

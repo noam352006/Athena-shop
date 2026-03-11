@@ -65,10 +65,15 @@ export class ShoeItemQuery extends QueryEntity<ShoeItemState> {
   }
 
   getbasicShoeById(id: string): Observable<BasicShoe | undefined> {
-    const searchedShoe = this.apollo
+    return this.apollo
       .getAllBasicShoes()
       .pipe(map((shoes) => shoes.find((shoe) => shoe.id === id)));
-    return searchedShoe;
+  }
+
+  isItemSoldOut(id: string): Observable<ShoeItem | undefined> {
+  return this.apollo
+      .getAllPurchases()
+      .pipe(map((shoes) => shoes.find((shoe) => shoe.id === id)));
   }
 
   selectAllShoes(): Observable<ShoeItem[]> {

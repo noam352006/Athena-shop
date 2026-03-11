@@ -17,7 +17,7 @@
         </div>
         <div class="container">
             <div class="card" *ngFor="let shoe of recommendedShoes | async">
-                <app-shoe-card [currShoe]="shoe" [isInMainPage]="true" (clickedPurchase)="purchase(shoe)"></app-shoe-card>
+                <app-shoe-card [currShoe]="shoe" [isInMainPage]="true"></app-shoe-card>
             </div>
         </div>
     </div>

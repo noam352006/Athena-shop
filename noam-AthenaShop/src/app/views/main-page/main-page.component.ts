@@ -22,11 +22,6 @@ export class MainPageComponent {
     `
 We believe every step tells a tale.Founded by passionate footwear enthusiasts, our boutique blends timeless classics with the-latest trends,offering hand‑picked shoes that give you comfort, quality, and style. From city‑slick sneakers to handcrafted leather-boots, we curate collections that inspire confidence and keep you moving-forward, one perfect pair at a time.`
 
-
-  purchase(shoe: ShoeItem) {
-    this.service.purchaseItem(shoe)
-  }
-
   navigateToShop(): void {
     this.service.navToShop();
   }

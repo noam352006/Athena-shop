@@ -31,7 +31,7 @@
                     <button class="button close" (click)="rate(0)">exit</button>
                 </div>
             </mat-menu>
-            <button class="rating-Button" [disabled]="buttonState != 'purchased'" [matMenuTriggerFor]="menu" >
+            <button class="rating-Button" [disabled]="!isSoldOut" [matMenuTriggerFor]="menu" >
                 <img  class="star-icon" src="../../../assets/utils/Five_Pointed_Star_Solid.svg">
             </button>
 
@@ -39,7 +39,7 @@
         </div>
         
         <div class="bottom-card-container">
-            <button (click)="onPurchase()" class="purchase-button" [disabled]="buttonState === 'disabled' || buttonState === 'purchased'">
+            <button (click)="onPurchase()" class="purchase-button" [disabled]="isSoldOut">
                 <mat-spinner *ngIf="buttonState === 'loading'" diameter="20"></mat-spinner>
                 <div *ngIf="buttonState != 'loading'">purchase</div>            </button>
             <div [ngClass]="{'main-price':isInMainPage}" class="price">${{currShoe.shoe.price}}</div>

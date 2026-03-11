@@ -8,6 +8,7 @@ import { AuthQuery } from 'src/app/shared/states/auth/auth.query';
 import { AuthService } from 'src/app/shared/states/auth/auth.service';
 import { ShoeItemQuery } from 'src/app/shared/states/shoeItems/shoe-item.query';
 import { shoeItemService } from 'src/app/shared/states/shoeItems/shoe-item.service';
+import { ApolloService } from '../apollo.service/apollo.service';
 
 @Injectable({
   providedIn: 'root',
@@ -19,6 +20,7 @@ export class MainService {
     private authQuery: AuthQuery,
     private shoeService: shoeItemService,
     private authService: AuthService,
+    private apollo: ApolloService
   ) {}
 
   navToShop(): void {
@@ -68,23 +70,6 @@ export class MainService {
     );
   }
 
-  sshoe: BasicShoe = {
-    id: '0',
-    brand: [Brands.Adidas, Brands.Yeezy],
-    model: '350 BELUGA',
-    rating: 3,
-    price: 55,
-    imgUrl: '../../../assets/items/adidas_yeezy_350_beluga.png',
-  };
-
-  shoe: ShoeItem = {
-    id: '1',
-    shoe: this.sshoe,
-    dateCreated: new Date(),
-    datePurchased: undefined,
-    size: 7.5,
-  };
-
   getMostBought(): Observable<BasicShoe | undefined> {
     return this.shoeQuery.getBestSeller().pipe(
       switchMap((id) => {
@@ -105,18 +90,19 @@ export class MainService {
     }
   }
 
-  purchaseItem(shoe: ShoeItem): boolean {
-    if (shoe.datePurchased === undefined) {
-      this.authService.purchase(shoe);
-      this.shoeService.purchaseShoe(shoe.id);
-
-      return true;
-    } else {
-      return false;
-    }
+  purchaseItem(shoeId: string){
+    console.log("purchasing")
+    const userId = this.authQuery.getCurrUser?.id;
+    if(userId){
+      this.apollo.purchaseShoe( userId, shoeId);
   }
+}
 
   getShoeSizes(id: string): number[] {
     return this.shoeQuery.getShoeSizes(id);
+  }
+
+  isItemSoldOut(id: string): Observable<ShoeItem | undefined> {
+    return this.shoeQuery.isItemSoldOut(id);
   }
 }
