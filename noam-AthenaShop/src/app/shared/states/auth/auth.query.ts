@@ -1,7 +1,7 @@
 import { Injectable } from "@angular/core";
 import { AuthState, AuthStore } from "./auth.store";
 import { Query } from "@datorama/akita";
-import { countBy, flatMap, maxBy } from "lodash";
+import { countBy, maxBy } from "lodash";
 import { Brands } from "../../enums/brand.enum";
 import { distinctUntilChanged, map, Observable, of, startWith, switchMap } from "rxjs";
 import { ShoeItem } from "../../intrefaces/shoeItem";
@@ -25,15 +25,14 @@ export class AuthQuery extends Query<AuthState> {
     super(store);
 
     this.favoriteBrand$ = this.select(state => state.connectedUser).pipe(
-      switchMap(user => this.apollo.getUserPurchases(user?.id!) ?? of([] as ShoeItem[])),
-      map(purchases => {
+      switchMap(user => this.apollo.getUserPurchasedBrands(user?.id!) ?? of([] as ShoeItem[])),
+      map(purchasedBrands => {
         const brand = maxBy(
           Object.entries(
-            countBy(flatMap(purchases, s => s.shoe.brand))
+            countBy(purchasedBrands)
           ),
           ([, cnt]) => cnt)?.[0] ?? 'Adidas';
 
-        console.log(brand)
         return brand as Brands;
       }),
       startWith(Brands.Adidas),

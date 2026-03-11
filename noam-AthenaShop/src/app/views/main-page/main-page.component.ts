@@ -1,7 +1,7 @@
 import { Component } from '@angular/core';
 import { MainService } from 'src/app/services/main.service/main.service';
 import { ShoeItem } from 'src/app/shared/intrefaces/shoeItem';
-import { Observable, tap } from 'rxjs';
+import { Observable } from 'rxjs';
 import { ApolloService } from 'src/app/services/apollo.service/apollo.service';
 import { BasicShoe } from 'src/app/shared/intrefaces/basicShoe';
 
@@ -14,7 +14,7 @@ export class MainPageComponent {
 
   constructor(private service: MainService, private aps: ApolloService) { }
 
-  bestSeller$: Observable<BasicShoe | undefined> = this.service.getMostBought();
+  bestSeller$: Observable<BasicShoe | undefined> = this.service.getBestSeller();
   newestShoe$: Observable<ShoeItem | null> = this.service.getNewestShoe();
   recommendedShoes: Observable<ShoeItem[]> = this.service.getTopSuggestionsForUser();
 
@@ -24,9 +24,5 @@ We believe every step tells a tale.Founded by passionate footwear enthusiasts, o
 
   navigateToShop(): void {
     this.service.navToShop();
-  }
-
-  pop(){
-    alert("hi");
   }
  }

@@ -65,7 +65,7 @@ export class LoginPageComponent {
         } else {
           this.isLoading = true;
           setTimeout(() =>
-            this.loginService.addUser(this.form.controls.password.value!, this.form.controls.userName.value!)
+            this.loginService.signUp(this.form.controls.password.value!, this.form.controls.userName.value!)
             ,2000);
         }
       }

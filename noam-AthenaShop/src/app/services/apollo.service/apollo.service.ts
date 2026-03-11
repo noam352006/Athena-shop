@@ -1,7 +1,6 @@
 import { Injectable } from '@angular/core';
 import { Apollo, gql } from 'apollo-angular';
-import { result } from 'lodash';
-import { map, Observable, of, tap } from 'rxjs';
+import { map, Observable, of } from 'rxjs';
 import { BasicShoe } from 'src/app/shared/intrefaces/basicShoe';
 import { partialUser } from 'src/app/shared/intrefaces/partialUser';
 import { ShoeItem } from 'src/app/shared/intrefaces/shoeItem';
@@ -28,24 +27,23 @@ export class ApolloService {
 
   GET_ALL_ITEMS = gql`
     query getAllItems {
-  shoe_item {
-    id
-    shoe {
-      brand
-      id
-      imgUrl
-      model
-      price
-      rating
+      shoe_item {
+        id
+        shoe {
+          brand
+          id
+          imgUrl
+          model
+          price
+          rating
+        }
+        purchase {
+          purchase_date
+        }
+        dateCreated
+        size
+      }
     }
-    purchase{
-      purchase_date
-    }
-    dateCreated
-    size
-  }
-}
-
   `;
 
   GET_CONNECTED_USER = gql`
@@ -59,21 +57,13 @@ export class ApolloService {
     }
   `;
 
-  GET_USER_PURCHASES = gql`
+  GET_USER_PURCHASED_BRANDS = gql`
     query getUserPurchasedBrands($id: uuid!) {
       purchases(where: { user_id: { _eq: $id } }) {
         shoe_item {
-          id
           shoe {
             brand
-            id
-            imgUrl
-            model
-            price
-            rating
           }
-          dateCreated
-          size
         }
       }
     }
@@ -99,11 +89,13 @@ export class ApolloService {
     }
   `;
 
-  GET_USER_BY_NAME= gql`query getUserByName($user_name: String!){
-  users(where: {user_name: {_eq: $user_name}}){
-    user_name
-  }
-}`
+  GET_USER_BY_NAME = gql`
+    query getUserByName($user_name: String!) {
+      users(where: { user_name: { _eq: $user_name } }) {
+        user_name
+      }
+    }
+  `;
 
   getAllBasicShoes(): Observable<BasicShoe[]> {
     return this.apollo
@@ -118,22 +110,26 @@ export class ApolloService {
       .watchQuery<{ shoe_item: any[] }>({
         query: this.GET_ALL_ITEMS,
       })
-      .valueChanges.pipe(map((result) => {
-        const itemList = result.data.shoe_item;
-        return itemList.map(item => {
-          const mappedItem: ShoeItem = {
-            id: item.id,
-            datePurchased: item.purchase? item.purchase.purchase_date: undefined,
-            dateCreated: item.dateCreated,
-            size: item.size,
-            shoe: item.shoe
-          }
-          return mappedItem
-        })
-      }));
+      .valueChanges.pipe(
+        map((result) => {
+          const itemList = result.data.shoe_item;
+          return itemList.map((item) => {
+            const mappedItem: ShoeItem = {
+              id: item.id,
+              datePurchased: item.purchase
+                ? item.purchase.purchase_date
+                : undefined,
+              dateCreated: item.dateCreated,
+              size: item.size,
+              shoe: item.shoe,
+            };
+            return mappedItem;
+          });
+        }),
+      );
   }
 
-  getUserByInfo(
+  getUserBycredentials(
     userPassword: string,
     userName: string,
   ): Observable<partialUser | null> {
@@ -166,16 +162,20 @@ export class ApolloService {
       );
   }
 
-  getUserPurchases(userId: string): Observable<ShoeItem[]> {
+  getUserPurchasedBrands(userId: string): Observable<String[]> {
     if (!userId) {
-      return of([] as ShoeItem[]);
+      return of([] as String[]);
     } else {
       return this.apollo
-        .watchQuery<{ purchases: { shoe_item: ShoeItem[] }[] }>({
-          query: this.GET_USER_PURCHASES,
+        .watchQuery<{ purchases: { shoe_item: {shoe: {brand: String}} }[] }>({
+          query: this.GET_USER_PURCHASED_BRANDS,
           variables: { id: userId },
         })
-        .valueChanges.pipe(map((result) => result.data.purchases.flatMap(p => p.shoe_item) ?? []));
+        .valueChanges.pipe(
+          map(
+            (result) => result.data.purchases.flatMap((p) => p.shoe_item.shoe.brand) ?? [],
+          ),
+        );
     }
   }
 
@@ -184,15 +184,16 @@ export class ApolloService {
       .watchQuery<{ purchases: { shoe_item: ShoeItem[] }[] }>({
         query: this.GET_PURCHASES,
       })
-      .valueChanges.pipe(map((result) => result.data.purchases.flatMap(p => p.shoe_item) ?? []));
+      .valueChanges.pipe(
+        map(
+          (result) => result.data.purchases.flatMap((p) => p.shoe_item) ?? [],
+        ),
+      );
   }
 
-  getUserByName(
-    userName: string,
-  ): Observable<string | null> {
-
+  getUserByName(userName: string): Observable<string | null> {
     return this.apollo
-      .watchQuery<{ users: {user_name : string}[] }>({
+      .watchQuery<{ users: { user_name: string }[] }>({
         query: this.GET_USER_BY_NAME,
         variables: {
           user_name: userName,
@@ -209,9 +210,8 @@ export class ApolloService {
           return user.user_name;
         }),
       );
-    }
+  }
 
-    
   //---------------mutation--------------------
 
   SIGN_UP = gql`
@@ -235,7 +235,7 @@ export class ApolloService {
     }
   `;
 
-  signInUser(
+  insertUser(
     userPassword: string,
     userName: string,
   ): Observable<partialUser | undefined> {
@@ -257,19 +257,18 @@ export class ApolloService {
 
             return mappedUser;
           } else {
-            return undefined
+            return undefined;
           }
         }),
       );
   }
 
-  purchaseShoe(userId: string, itemID: string) {
-    console.log("apollo-service, purchasing shoe :)")
+  insertPurchase(userId: string, itemID: string): void {
     this.apollo
       .mutate({
         mutation: this.PURCHASE_ITEM,
         variables: { user_id: userId, shoe_id: itemID },
-        refetchQueries:[this.GET_PURCHASES]
+        refetchQueries: [this.GET_PURCHASES, this.GET_USER_PURCHASED_BRANDS],
       })
       .subscribe();
   }

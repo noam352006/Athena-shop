@@ -1,10 +1,8 @@
-import {Component, EventEmitter ,Input, Output, SimpleChanges,
-} from '@angular/core';
+import {Component,Input, SimpleChanges } from '@angular/core';
 import { ShoeItem } from 'src/app/shared/intrefaces/shoeItem';
 import { PopUpComponent } from '../pop-up/pop-up.component';
 import { MainService } from 'src/app/services/main.service/main.service';
 import { MatDialog } from '@angular/material/dialog';
-import { Observable } from 'rxjs';
 
 @Component({
   selector: 'app-shoe-card',
@@ -53,7 +51,7 @@ export class ShoeCardComponent {
     this.buttonState = "disabled"
   }
 
-  openDialog(canPurchase: Boolean) {
+  openDialog(canPurchase: Boolean): void {
     const dialogRef = this.dialog.open(PopUpComponent, {
       width: '30em',
       data: { success: !canPurchase },
