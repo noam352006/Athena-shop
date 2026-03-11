@@ -52,7 +52,7 @@ export class ApolloService {
         id
         user_name
         role
-        dateCreated
+        date_created
       }
     }
   `;
@@ -155,7 +155,7 @@ export class ApolloService {
             id: user.id,
             userName: user.user_name,
             role: user.role,
-            dateCreated: user.dateCreated,
+            dateCreated: user.date_created,
           };
           return mappedUser;
         }),
