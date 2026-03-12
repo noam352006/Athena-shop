@@ -78,18 +78,12 @@ import { ApolloModule } from 'apollo-angular';
       useFactory: (httpLink: HttpLink): ApolloClientOptions<any> => {
 
         const http = httpLink.create({
-          uri: 'https://helpful-crow-38.hasura.app/v1/graphql',
+          uri: 'http://localhost:3000',
         });
 
-        const auth = setContext((_, { headers }) => ({
-          headers: {
-            ...headers,
-            'x-hasura-admin-secret': 'NU6VbveJ97irpguhPSWQtrXhhvFCq4kP75IKKkql3viL0zUO0HCDJZZecH8txTjU',
-          },
-        }));
         return {
           cache: new InMemoryCache(),
-          link: ApolloLink.from([auth, http]),
+          link: ApolloLink.from([http]),
         };
       },
       deps: [HttpLink],

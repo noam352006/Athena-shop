@@ -1,8 +1,6 @@
 import { ApolloClient, gql } from '@apollo/client';
-import { DeepPartial } from '@apollo/client/utilities';
 import { Injectable } from '@nestjs/common';
-import { map, Observable, of } from 'rxjs';
-import { BasicShoe } from 'src/interfaces/basicShoe';
+import { BasicShoe } from 'src/classes/basicShoe';
 
 @Injectable()
 export class BasicShoeService {

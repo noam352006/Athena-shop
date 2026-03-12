@@ -2,9 +2,9 @@ import { Resolver, Query, Mutation, Args } from '@nestjs/graphql';
 import { ShoesService } from './services/item.service';
 import { BasicShoeService } from './services/basicShoe.service';
 import { UserService } from './services/user.service';
-import { BasicShoe } from './interfaces/basicShoe';
-import { ShoeItem } from './interfaces/shoeItem';
-import { PartialUser } from './interfaces/partialUser';
+import { BasicShoe } from './classes/basicShoe';
+import { ShoeItem } from './classes/shoeItem';
+import { PartialUser } from './classes/partialUser';
 
 @Resolver()
 export class AppResolver {

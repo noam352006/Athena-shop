@@ -11,265 +11,177 @@ import { ShoeItem } from 'src/app/shared/intrefaces/shoeItem';
 export class ApolloService {
   constructor(private readonly apollo: Apollo) {}
 
-  //-----------------queries-----------------
-  GET_ALL_BASIC_SHOES = gql`
-    query getAllShoes {
-      basic_shoe {
-        brand
-        id
-        model
-        price
-        rating
-        imgUrl
-      }
-    }
-  `;
-
-  GET_ALL_ITEMS = gql`
-    query getAllItems {
-      shoe_item {
-        id
-        shoe {
-          brand
-          id
-          imgUrl
-          model
-          price
-          rating
-        }
-        purchase {
-          purchase_date
-        }
-        dateCreated
-        size
-      }
-    }
-  `;
-
-  GET_CONNECTED_USER = gql`
-    query getUserByLogin($password: String!, $user_name: String!) {
-      users_by_pk(password: $password, user_name: $user_name) {
-        id
-        user_name
-        role
-        date_created
-      }
-    }
-  `;
-
-  GET_USER_PURCHASED_BRANDS = gql`
-    query getUserPurchasedBrands($id: uuid!) {
-      purchases(where: { user_id: { _eq: $id } }) {
-        shoe_item {
-          shoe {
-            brand
-          }
-        }
-      }
-    }
-  `;
-
-  GET_PURCHASES = gql`
-    query getUserPurchasedBrands {
-      purchases {
-        shoe_item {
-          id
-          shoe {
-            brand
-            id
-            imgUrl
-            model
-            price
-            rating
-          }
-          dateCreated
-          size
-        }
-      }
-    }
-  `;
-
-  GET_USER_BY_NAME = gql`
-    query getUserByName($user_name: String!) {
-      users(where: { user_name: { _eq: $user_name } }) {
-        user_name
-      }
-    }
-  `;
-
+  // ---------------- BASIC SHOES ----------------
   getAllBasicShoes(): Observable<BasicShoe[]> {
     return this.apollo
-      .watchQuery<{ basic_shoe: BasicShoe[] }>({
-        query: this.GET_ALL_BASIC_SHOES,
+      .watchQuery<{ getAllBasicShoes: BasicShoe[] }>({
+        query: gql`
+          query {
+            getAllBasicShoes {
+              id
+              brand
+              model
+              price
+              rating
+              imgUrl
+            }
+          }
+        `,
       })
-      .valueChanges.pipe(map((result) => result.data.basic_shoe));
+      .valueChanges.pipe(map((result) => result.data.getAllBasicShoes));
   }
 
+  // ---------------- SHOE ITEMS ----------------
   getAllItems(): Observable<ShoeItem[]> {
     return this.apollo
-      .watchQuery<{ shoe_item: any[] }>({
-        query: this.GET_ALL_ITEMS,
-      })
-      .valueChanges.pipe(
-        map((result) => {
-          const itemList = result.data.shoe_item;
-          return itemList.map((item) => {
-            const mappedItem: ShoeItem = {
-              id: item.id,
-              datePurchased: item.purchase
-                ? item.purchase.purchase_date
-                : undefined,
-              dateCreated: item.dateCreated,
-              size: item.size,
-              shoe: item.shoe,
-            };
-            return mappedItem;
-          });
-        }),
-      );
-  }
-
-  getUserBycredentials(
-    userPassword: string,
-    userName: string,
-  ): Observable<partialUser | null> {
-    console.log('fetching user password:', userPassword, 'user:', userName);
-
-    return this.apollo
-      .watchQuery<{ users_by_pk: any }>({
-        query: this.GET_CONNECTED_USER,
-        variables: {
-          password: userPassword,
-          user_name: userName,
-        },
-        fetchPolicy: 'network-only', // חשוב לדיבוג – מבטל cache
-      })
-      .valueChanges.pipe(
-        map((result) => {
-          const user = result?.data?.users_by_pk;
-          if (!user) {
-            console.log('User not found');
-            return null;
+      .watchQuery<{ getAllShoes: ShoeItem[] }>({
+        query: gql`
+          query {
+            getAllShoes {
+              id
+              size
+              dateCreated
+              datePurchased
+              shoe {
+                id
+                brand
+                model
+                price
+                rating
+                imgUrl
+              }
+            }
           }
-          const mappedUser: partialUser = {
-            id: user.id,
-            userName: user.user_name,
-            role: user.role,
-            dateCreated: user.date_created,
-          };
-          return mappedUser;
-        }),
-      );
-  }
-
-  getUserPurchasedBrands(userId: string): Observable<String[]> {
-    if (!userId) {
-      return of([] as String[]);
-    } else {
-      return this.apollo
-        .watchQuery<{ purchases: { shoe_item: {shoe: {brand: String}} }[] }>({
-          query: this.GET_USER_PURCHASED_BRANDS,
-          variables: { id: userId },
-        })
-        .valueChanges.pipe(
-          map(
-            (result) => result.data.purchases.flatMap((p) => p.shoe_item.shoe.brand) ?? [],
-          ),
-        );
-    }
+        `,
+      })
+      .valueChanges.pipe(map((result) => result.data.getAllShoes));
   }
 
   getAllPurchases(): Observable<ShoeItem[]> {
     return this.apollo
-      .watchQuery<{ purchases: { shoe_item: ShoeItem[] }[] }>({
-        query: this.GET_PURCHASES,
-      })
-      .valueChanges.pipe(
-        map(
-          (result) => result.data.purchases.flatMap((p) => p.shoe_item) ?? [],
-        ),
-      );
-  }
-
-  getUserByName(userName: string): Observable<string | null> {
-    return this.apollo
-      .watchQuery<{ users: { user_name: string }[] }>({
-        query: this.GET_USER_BY_NAME,
-        variables: {
-          user_name: userName,
-        },
-        fetchPolicy: 'network-only', // חשוב לדיבוג – מבטל cache
-      })
-      .valueChanges.pipe(
-        map((result) => {
-          const user = result?.data?.users[0];
-          if (!user) {
-            console.log('userName does not exist');
-            return null;
+      .watchQuery<{ getAllPurchases: ShoeItem[] }>({
+        query: gql`
+          query {
+            getAllPurchases {
+              id
+              size
+              dateCreated
+              datePurchased
+              shoe {
+                id
+                brand
+                model
+                price
+                rating
+                imgUrl
+              }
+            }
           }
-          return user.user_name;
-        }),
-      );
+        `,
+      })
+      .valueChanges.pipe(map((result) => result.data.getAllPurchases));
   }
 
-  //---------------mutation--------------------
+  insertPurchase(userId: string, itemId: string): Observable<ShoeItem> {
+    return this.apollo
+      .mutate<{ purchaseItem: ShoeItem }>({
+        mutation: gql`
+          mutation ($userId: String!, $itemId: String!) {
+            purchaseItem(userId: $userId, itemId: $itemId) {
+              id
+              size
+              dateCreated
+              datePurchased
+              shoe {
+                id
+                brand
+                model
+                price
+                rating
+                imgUrl
+              }
+            }
+          }
+        `,
+        variables: { userId, itemId },
+      })
+      .pipe(map((result) => result.data!.purchaseItem));
+  }
 
-  SIGN_UP = gql`
-    mutation getUserByLogin($password: String!, $user_name: String!) {
-      insert_users_one(object: { password: $password, user_name: $user_name }) {
-        id
-        user_name
-        role
-        dateCreated
-      }
-    }
-  `;
-
-  PURCHASE_ITEM = gql`
-    mutation purchaseShoe($user_id: uuid!, $shoe_id: uuid!) {
-      insert_purchases_one(object: { user_id: $user_id, item_id: $shoe_id }) {
-        user_id
-        item_id
-        purchase_date
-      }
-    }
-  `;
-
-  insertUser(
+  // ---------------- USERS ----------------
+  getUserBycredentials(
     userPassword: string,
     userName: string,
-  ): Observable<partialUser | undefined> {
+  ): Observable<partialUser | null> {
     return this.apollo
-      .mutate<{ insert_users_one: any }>({
-        mutation: this.SIGN_UP,
-        variables: { password: userPassword, user_name: userName },
-      })
-      .pipe(
-        map((r) => {
-          const user = r?.data?.insert_users_one;
-          if (user) {
-            const mappedUser: partialUser = {
-              id: user.id,
-              userName: user.user_name,
-              role: user.role,
-              dateCreated: user.dateCreated,
-            };
-
-            return mappedUser;
-          } else {
-            return undefined;
+      .watchQuery<{ getUserByCredentials: partialUser | null }>({
+        query: gql`
+          query ($userPassword: String!, $userName: String!) {
+            getUserByCredentials(
+              userPassword: $userPassword
+              userName: $userName
+            ) {
+              id
+              userName
+              role
+              dateCreated
+            }
           }
-        }),
-      );
+        `,
+        variables: { userPassword, userName },
+        fetchPolicy: 'network-only',
+      })
+      .valueChanges.pipe(map((result) => result.data.getUserByCredentials));
   }
 
-  insertPurchase(userId: string, itemID: string): void {
-    this.apollo
-      .mutate({
-        mutation: this.PURCHASE_ITEM,
-        variables: { user_id: userId, shoe_id: itemID },
-        refetchQueries: [this.GET_PURCHASES, this.GET_USER_PURCHASED_BRANDS],
+  getUserByName(userName: string): Observable<partialUser | null> {
+    return this.apollo
+      .watchQuery<{ getUserByName: partialUser | null }>({
+        query: gql`
+          query ($userName: String!) {
+            getUserByName(userName: $userName) {
+              id
+              userName
+              role
+              dateCreated
+            }
+          }
+        `,
+        variables: { userName },
+        fetchPolicy: 'network-only',
       })
-      .subscribe();
+      .valueChanges.pipe(map((result) => result.data.getUserByName));
+  }
+
+  getUserPurchasedBrands(userId: string): Observable<string[]> {
+    if (!userId) return of([]);
+    return this.apollo
+      .watchQuery<{ getUserPurchasedBrands: string[] }>({
+        query: gql`
+          query ($userId: String!) {
+            getUserPurchasedBrands(userId: $userId)
+          }
+        `,
+        variables: { userId },
+      })
+      .valueChanges.pipe(map((result) => result.data.getUserPurchasedBrands));
+  }
+
+  insertUser(userPassword: string, userName: string): Observable<partialUser> {
+    return this.apollo
+      .mutate<{ signUserUp: partialUser }>({
+        mutation: gql`
+          mutation ($userPassword: String!, $userName: String!) {
+            signUserUp(userPassword: $userPassword, userName: $userName) {
+              id
+              userName
+              role
+              dateCreated
+            }
+          }
+        `,
+        variables: { userPassword, userName },
+      })
+      .pipe(map((result) => result.data!.signUserUp));
   }
 }

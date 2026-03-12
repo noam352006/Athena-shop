@@ -1,5 +1,4 @@
 import { Field, ObjectType } from "@nestjs/graphql";
-import { ShoeItem } from "./shoeItem";
 
 export enum UserRole {
     Manager, 
@@ -13,5 +12,4 @@ export class User {
   @Field() passowrd: String;
   @Field() role: UserRole;
   @Field() dateCreated: string;
-  @Field() purchaseHistory: ShoeItem[];
 }

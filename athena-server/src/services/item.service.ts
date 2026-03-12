@@ -1,6 +1,6 @@
 import { ApolloClient, gql } from '@apollo/client';
 import { Injectable } from '@nestjs/common';
-import { ShoeItem } from 'src/interfaces/shoeItem';
+import { ShoeItem } from 'src/classes/shoeItem';
 
 @Injectable()
 export class ShoesService {

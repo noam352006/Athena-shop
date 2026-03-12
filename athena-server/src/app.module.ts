@@ -6,6 +6,7 @@ import { AppResolver } from './app.resolver';
 import { BasicShoeService } from './services/basicShoe.service';
 import { ShoesService } from './services/item.service';
 import { UserService } from './services/user.service';
+import { ApolloClientProvider } from './apollo.provider';
 
 @Module({
   imports: [
@@ -17,6 +18,7 @@ import { UserService } from './services/user.service';
   providers: [
     AppService,
     AppResolver,
+    ApolloClientProvider,
     BasicShoeService,
     ShoesService,
     UserService,
