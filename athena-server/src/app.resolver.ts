@@ -32,7 +32,7 @@ export class AppResolver {
   }
 
   @Mutation(() => Date)
-  async commitNewPurchase(
+  async purchaseItem(
     @Args('userId') userId: string,
     @Args('itemId') shoeId: string,
   ) {

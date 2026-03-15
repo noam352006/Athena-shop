@@ -7,7 +7,7 @@ export const ApolloClientProvider: Provider = {
   useFactory: () => {
     return new ApolloClient({
       link: new HttpLink({
-        uri: 'https://your-hasura-endpoint/v1/graphql', 
+        uri: 'https://helpful-crow-38.hasura.app/v1/graphql', 
         headers: {
           'x-hasura-admin-secret': 'NU6VbveJ97irpguhPSWQtrXhhvFCq4kP75IKKkql3viL0zUO0HCDJZZecH8txTjU',
         },

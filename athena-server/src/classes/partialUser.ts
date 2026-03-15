@@ -6,5 +6,5 @@ export class PartialUser {
   @Field() id: string;
   @Field() userName: string;
   @Field() role: UserRole;
-  @Field() dateCreated: string;
+  @Field() dateCreated: Date;
 }

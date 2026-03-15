@@ -1,4 +1,4 @@
-import { Field, ObjectType } from "@nestjs/graphql";
+import { Field, ObjectType, registerEnumType } from "@nestjs/graphql";
 
 export enum Brands {
     Adidas = "Adidas",
@@ -9,10 +9,12 @@ export enum Brands {
     Off___White = "Off___White"
 }
 
+registerEnumType(Brands, {name: "Brands"})
+
 @ObjectType()
 export class BasicShoe {
   @Field() id: string;
-  @Field() brand: string;
+  @Field(type => [Brands]) brand: Brands[];
   @Field() model: string;
   @Field() price: number;
   @Field() rating: number;

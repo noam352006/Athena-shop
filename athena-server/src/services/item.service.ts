@@ -25,7 +25,13 @@ export class ShoesService {
         variables: { user_id: userId, shoe_id: itemID },
       });
 
-      return result.data?.insert_purchases_one.purchase_date;
+      const purchseDate = result.data?.insert_purchases_one.purchase_date
+      if(!purchseDate){
+        return undefined
+      }
+
+      return new Date(purchseDate!);
+
     } catch (error) {
       console.error('Error commit purchase from Hasura:', error);
       throw error;
@@ -65,9 +71,9 @@ export class ShoesService {
         const newItem: ShoeItem = {
           id: item.id,
           size: item.size,
-          dateCreated: item.dateCreated,
+          dateCreated: new Date(item.dateCreated),
           shoe: item.shoe,
-          datePurchased: item.purchase?.purchase_date,
+          datePurchased: item.purchase?.purchase_date ? new Date(item.purchase?.purchase_date) : undefined,
         };
 
         return newItem;
@@ -82,6 +88,7 @@ export class ShoesService {
     const QUERY = gql`
       query getAllPurchases {
         purchases {
+          purchase_date
           shoe_item {
             id
             size
@@ -101,12 +108,24 @@ export class ShoesService {
 
     try {
       const result = await this.client.query<{
-        purchases: { shoe_item: ShoeItem }[] | undefined;
+        purchases: { purchaseDate: Date, shoe_item: ShoeItem }[] | undefined;
       }>({
         query: QUERY,
       });
 
-      return result.data?.purchases?.flatMap((p) => p.shoe_item);
+      return result.data?.purchases?.flatMap((p) => {
+        const item = p.shoe_item;
+
+        const newItem: ShoeItem = {
+          id: item.id,
+          size: item.size,
+          dateCreated: new Date(item.dateCreated),
+          shoe: item.shoe,
+          datePurchased:p.purchaseDate? new Date(p.purchaseDate) : undefined,
+        };
+
+        return newItem;
+      });
     } catch (error) {
       console.error('Error fetching purchases:', error);
       throw error;

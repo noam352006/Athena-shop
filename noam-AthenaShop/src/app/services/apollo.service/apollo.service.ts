@@ -82,25 +82,12 @@ export class ApolloService {
       .valueChanges.pipe(map((result) => result.data.getAllPurchases));
   }
 
-  insertPurchase(userId: string, itemId: string): Observable<ShoeItem> {
+  insertPurchase(userId: string, itemId: string): Observable<Date> {
     return this.apollo
-      .mutate<{ purchaseItem: ShoeItem }>({
+      .mutate<{ purchaseItem: Date }>({
         mutation: gql`
           mutation ($userId: String!, $itemId: String!) {
-            purchaseItem(userId: $userId, itemId: $itemId) {
-              id
-              size
-              dateCreated
-              datePurchased
-              shoe {
-                id
-                brand
-                model
-                price
-                rating
-                imgUrl
-              }
-            }
+            purchaseItem(userId: $userId, itemId: $itemId) 
           }
         `,
         variables: { userId, itemId },
@@ -159,7 +146,7 @@ export class ApolloService {
       .watchQuery<{ getUserPurchasedBrands: string[] }>({
         query: gql`
           query ($userId: String!) {
-            getUserPurchasedBrands(userId: $userId)
+            getUserPurchasedBrands(user_id: $userId)
           }
         `,
         variables: { userId },

@@ -1,6 +1,7 @@
 import { ApolloClient, gql } from '@apollo/client';
 import { Injectable } from '@nestjs/common';
 import { PartialUser } from 'src/classes/partialUser';
+import { UserRole } from 'src/classes/user';
 
 @Injectable()
 export class UserService {
@@ -31,7 +32,7 @@ export class UserService {
         id: user.id,
         userName: user.user_name,
         role: user.role,
-        dateCreated: user.date_created,
+        dateCreated: new Date(user.date_created),
       };
     } catch (error) {
       console.error('Error fetching SHOE ITEMS from Hasura:', error);
@@ -49,8 +50,8 @@ export class UserService {
         users_by_pk(password: $password, user_name: $user_name) {
           id
           user_name
-          role
           date_created
+          role
         }
       }
     `;
@@ -72,8 +73,8 @@ export class UserService {
       return {
         id: user.id,
         userName: user.user_name,
-        role: user.role,
-        dateCreated: user.date_created,
+        role: user.role ?? UserRole.Guest,
+        dateCreated: new Date(user.date_created),
       };
     } catch (error) {
       console.error('Error fetching user:', error);
@@ -81,18 +82,22 @@ export class UserService {
     }
   }
 
-  async getUserByName(userName: string): Promise<string | null> {
+  async getUserByName(userName: string): Promise<PartialUser | null> {
     const QUERY = gql`
       query getUserByName($user_name: String!) {
         users(where: { user_name: { _eq: $user_name } }) {
           user_name
+          id
+          user_name
+          date_created
+          role
         }
       }
     `;
 
     try {
       const result = await this.client.query<{
-        users: { user_name: string }[];
+        users: any;
       }>({
         query: QUERY,
         variables: {
@@ -105,7 +110,12 @@ export class UserService {
 
       if (!user) return null;
 
-      return user.user_name;
+      return {
+        id: user.id,
+        userName: user.user_name,
+        role: user.role ?? UserRole.Guest,
+        dateCreated: new Date(user.date_created),
+      };
     } catch (error) {
       console.error('Error fetching user by name:', error);
       throw error;

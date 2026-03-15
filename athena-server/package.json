@@ -28,6 +28,7 @@
     "@nestjs/core": "^11.0.1",
     "@nestjs/graphql": "^13.2.4",
     "@nestjs/platform-express": "^11.0.1",
+    "cors": "^2.8.6",
     "cross-fetch": "^4.1.0",
     "graphql": "^16.13.1",
     "node-fetch": "^3.3.2",

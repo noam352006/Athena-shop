@@ -78,7 +78,7 @@ import { ApolloModule } from 'apollo-angular';
       useFactory: (httpLink: HttpLink): ApolloClientOptions<any> => {
 
         const http = httpLink.create({
-          uri: 'http://localhost:3000',
+          uri: 'http://localhost:3000/graphql',
         });
 
         return {
