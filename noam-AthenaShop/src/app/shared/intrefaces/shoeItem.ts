@@ -4,5 +4,6 @@ export interface ShoeItem {
     id: string,
     shoe: BasicShoe,
     dateCreated: Date,
+    datePurchased?: Date,
     size: number,
 }

@@ -32,9 +32,29 @@ export class ApolloService {
   }
 
   // ---------------- SHOE ITEMS ----------------
+
+  GET_ALL_PURCHASES_QUERY = gql`
+    query {
+      getAllPurchases {
+        id
+        size
+        dateCreated
+        datePurchased
+        shoe {
+          id
+          brand
+          model
+          price
+          rating
+          imgUrl
+        }
+      }
+    }
+  `;
+
   getAllItems(): Observable<ShoeItem[]> {
     return this.apollo
-      .watchQuery<{ getAllShoes: ShoeItem[] }>({
+      .query<{ getAllShoes: ShoeItem[] }>({
         query: gql`
           query {
             getAllShoes {
@@ -53,44 +73,31 @@ export class ApolloService {
             }
           }
         `,
+        fetchPolicy: 'network-only',
       })
-      .valueChanges.pipe(map((result) => result.data.getAllShoes));
+      .pipe(map((result) => result.data.getAllShoes));
   }
 
   getAllPurchases(): Observable<ShoeItem[]> {
     return this.apollo
       .watchQuery<{ getAllPurchases: ShoeItem[] }>({
-        query: gql`
-          query {
-            getAllPurchases {
-              id
-              size
-              dateCreated
-              datePurchased
-              shoe {
-                id
-                brand
-                model
-                price
-                rating
-                imgUrl
-              }
-            }
-          }
-        `,
+        query: this.GET_ALL_PURCHASES_QUERY,
       })
       .valueChanges.pipe(map((result) => result.data.getAllPurchases));
   }
 
   insertPurchase(userId: string, itemId: string): Observable<Date> {
+    console.log('adding purchase', itemId, userId);
     return this.apollo
       .mutate<{ purchaseItem: Date }>({
         mutation: gql`
           mutation ($userId: String!, $itemId: String!) {
-            purchaseItem(userId: $userId, itemId: $itemId) 
+            purchaseItem(userId: $userId, itemId: $itemId)
           }
         `,
         variables: { userId, itemId },
+        refetchQueries: [{ query: this.GET_ALL_PURCHASES_QUERY }],
+        awaitRefetchQueries: true,
       })
       .pipe(map((result) => result.data!.purchaseItem));
   }

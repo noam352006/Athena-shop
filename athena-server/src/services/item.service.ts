@@ -65,6 +65,7 @@ export class ShoesService {
     try {
       const result = await this.client.query<{ shoe_item: any[] }>({
         query: QUERY,
+        fetchPolicy: "network-only"
       });
 
       return result.data?.shoe_item.map((item) => {
@@ -111,6 +112,7 @@ export class ShoesService {
         purchases: { purchaseDate: Date, shoe_item: ShoeItem }[] | undefined;
       }>({
         query: QUERY,
+        fetchPolicy: "network-only"
       });
 
       return result.data?.purchases?.flatMap((p) => {

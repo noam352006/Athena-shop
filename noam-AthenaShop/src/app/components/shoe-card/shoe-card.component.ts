@@ -22,7 +22,6 @@ export class ShoeCardComponent {
     if (changes['currShoe'] && this.currShoe) {
       const result = this.mainService.getShoeSizes(this.currShoe.shoe.id);
       const isPurchased = this.mainService.isItemSoldOut(this.currShoe.id);
-
       this.sizes = result;
       isPurchased.subscribe((s) => (this.isSoldOut = s? true : false));
     }

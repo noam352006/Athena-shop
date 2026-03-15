@@ -52,7 +52,7 @@ export class ShoeItemQuery extends QueryEntity<ShoeItemState> {
   }
 
   //---------SHOE-ITEMS LIST---------------
-  
+
   getNewestItem(): Observable<ShoeItem | null> {
     return this.selectAll().pipe(
       filter((shoes) => shoes.length > 0), // מוודאים שיש לפחות ערך אחד
@@ -78,9 +78,11 @@ export class ShoeItemQuery extends QueryEntity<ShoeItemState> {
   }
 
   selectByBrand(shoeList: ShoeItem[], brands?: string[]): ShoeItem[] {
-    return brands ? shoeList
-    .filter((item) => item.shoe.brand.some((v) => brands.includes(v)))
-    : shoeList;
+    return brands
+      ? shoeList.filter((item) =>
+          item.shoe.brand.some((v) => brands.includes(v)),
+        )
+      : shoeList;
   }
 
   getBasicShoeById(id: string): Observable<BasicShoe | undefined> {
@@ -88,7 +90,7 @@ export class ShoeItemQuery extends QueryEntity<ShoeItemState> {
       .getAllBasicShoes()
       .pipe(map((shoes) => shoes.find((shoe) => shoe.id === id)));
   }
-    
+
   selectItemsByBasicShoe(id: string): ShoeItem[] {
     return this.getAll().filter((item) => item.shoe.id === id);
   }
@@ -97,8 +99,8 @@ export class ShoeItemQuery extends QueryEntity<ShoeItemState> {
     return this.selectItemsByBasicShoe(shoId).map((s) => s.size);
   }
 
-   isItemSoldOut(id: string): Observable<ShoeItem | undefined> {
-  return this.apollo
+  isItemSoldOut(id: string): Observable<ShoeItem | undefined> {
+    return this.apollo
       .getAllPurchases()
       .pipe(map((shoes) => shoes.find((shoe) => shoe.id === id)));
   }

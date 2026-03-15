@@ -18,7 +18,7 @@ export class MainService {
     private router: Router,
     private authQuery: AuthQuery,
     private shoeService: shoeItemService,
-    private apollo: ApolloService
+    private apollo: ApolloService,
   ) {}
 
   navToShop(): void {
@@ -84,12 +84,14 @@ export class MainService {
     }
   }
 
-  purchaseItem(shoeId: string){
+  purchaseItem(shoeId: string): void {
     const userId = this.authQuery.getCurrUser?.id;
-    if(userId){
-      this.apollo.insertPurchase( userId, shoeId);
-   } 
- }
+    if (userId) {
+      this.apollo.insertPurchase(userId, shoeId).subscribe(async (date) => {
+        console.log(date);
+      });
+    }
+  }
 
   getShoeSizes(id: string): number[] {
     return this.shoeQuery.getShoeSizes(id);
