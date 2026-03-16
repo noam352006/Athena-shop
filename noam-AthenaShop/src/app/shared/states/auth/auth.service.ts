@@ -16,25 +16,4 @@ export class AuthService {
     logOut(): void {
         this.store.update({ connectedUser: undefined });
     }
-
-    purchase(newShoe: ShoeItem): void {}
-        /*this.store.update(state => {
-            const user = state.connectedUser;
-            if (!user) {
-                return {};
-            }
-
-            const newHistory = [
-                ...(user.purchaseHistory ?? []),
-                newShoe
-            ];
-
-            return {
-                connectedUser: {
-                    ...user,
-                    purchaseHistory: newHistory
-                }
-            };
-        });
-    }*/
 }

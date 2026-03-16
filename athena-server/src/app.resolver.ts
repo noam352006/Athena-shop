@@ -36,8 +36,8 @@ export class AppResolver {
     @Args('userId') userId: string,
     @Args('itemId') shoeId: string,
   ) {
-    const result =  await this.itemService.purchaseItem(userId, shoeId);
-    return result? new Date( result) : undefined;
+    const result = await this.itemService.purchaseItem(userId, shoeId);
+    return result ? new Date(result) : undefined;
   }
 
   //-----------USERS------------------

@@ -1,7 +1,6 @@
 import { ApolloClient, gql } from '@apollo/client';
 import { Injectable } from '@nestjs/common';
-import { PartialUser } from 'src/classes/partialUser';
-import { UserRole } from 'src/classes/user';
+import { PartialUser, UserRole } from 'src/classes/partialUser';
 
 @Injectable()
 export class UserService {
@@ -103,7 +102,6 @@ export class UserService {
         variables: {
           user_name: userName,
         },
-        fetchPolicy: 'network-only',
       });
 
       const user = result.data?.users[0];

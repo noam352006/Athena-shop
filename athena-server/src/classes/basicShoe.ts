@@ -1,15 +1,15 @@
 import { Field, ObjectType, registerEnumType } from "@nestjs/graphql";
 
 export enum Brands {
-    Adidas = "Adidas",
-    Nike = "Nike",
-    Yeezy = "Yeezy",
-    Air_Jordan = "Air_Jordan",
-    Puma = "Puma",
-    Off___White = "Off___White"
+  Adidas = "Adidas",
+  Nike = "Nike",
+  Yeezy = "Yeezy",
+  Air_Jordan = "Air_Jordan",
+  Puma = "Puma",
+  Off___White = "Off___White"
 }
 
-registerEnumType(Brands, {name: "Brands"})
+registerEnumType(Brands, {name: "Brands"});
 
 @ObjectType()
 export class BasicShoe {

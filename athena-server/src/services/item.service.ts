@@ -6,6 +6,9 @@ import { ShoeItem } from 'src/classes/shoeItem';
 export class ShoesService {
   constructor(private readonly client: ApolloClient) {}
 
+
+  //------MUTATIONS----------------
+
   async purchaseItem(
     userId: string,
     itemID: string,
@@ -31,7 +34,6 @@ export class ShoesService {
       }
 
       return new Date(purchseDate!);
-
     } catch (error) {
       console.error('Error commit purchase from Hasura:', error);
       throw error;
