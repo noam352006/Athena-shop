@@ -29,11 +29,8 @@ import { FormsModule } from '@angular/forms';
 import { SliderComponent } from './components/slider/slider.component';
 import { PopUpComponent } from './components/pop-up/pop-up.component';
 import { HttpClientModule } from '@angular/common/http';
-import { APOLLO_OPTIONS } from 'apollo-angular';
-import { HttpLink } from 'apollo-angular/http';
-import { ApolloClientOptions, InMemoryCache, ApolloLink } from '@apollo/client/core';
-import { setContext } from '@apollo/client/link/context';
 import { ApolloModule } from 'apollo-angular';
+import { ApolloClientProvider } from './apolloProvider';
  
 @NgModule({
   declarations: [
@@ -73,21 +70,7 @@ import { ApolloModule } from 'apollo-angular';
     ApolloModule
   ],
     providers: [
-    {
-      provide: APOLLO_OPTIONS,
-      useFactory: (httpLink: HttpLink): ApolloClientOptions<any> => {
-
-        const http = httpLink.create({
-          uri: 'http://localhost:3000/graphql',
-        });
-
-        return {
-          cache: new InMemoryCache(),
-          link: ApolloLink.from([http]),
-        };
-      },
-      deps: [HttpLink],
-    },
+    ApolloClientProvider
   ],
   bootstrap: [AppComponent],
 })

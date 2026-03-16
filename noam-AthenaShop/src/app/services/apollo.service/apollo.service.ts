@@ -33,25 +33,6 @@ export class ApolloService {
 
   // ---------------- SHOE ITEMS ----------------
 
-  GET_ALL_PURCHASES_QUERY = gql`
-    query {
-      getAllPurchases {
-        id
-        size
-        dateCreated
-        datePurchased
-        shoe {
-          id
-          brand
-          model
-          price
-          rating
-          imgUrl
-        }
-      }
-    }
-  `;
-
   getAllItems(): Observable<ShoeItem[]> {
     return this.apollo
       .query<{ getAllShoes: ShoeItem[] }>({
@@ -78,12 +59,77 @@ export class ApolloService {
       .pipe(map((result) => result.data.getAllShoes));
   }
 
+  ///replaced by subscribeToPurchases 
   getAllPurchases(): Observable<ShoeItem[]> {
     return this.apollo
       .watchQuery<{ getAllPurchases: ShoeItem[] }>({
-        query: this.GET_ALL_PURCHASES_QUERY,
+        query: gql`
+          query {
+            getAllPurchases {
+              id
+              size
+              dateCreated
+              datePurchased
+              shoe {
+                id
+                brand
+                model
+                price
+                rating
+                imgUrl
+              }
+            }
+          }
+        `,
       })
       .valueChanges.pipe(map((result) => result.data.getAllPurchases));
+  }
+
+  subscribeToPurchases(): Observable<ShoeItem[] | undefined> {
+    return this.apollo
+      .subscribe<{
+        purchases: { purchaseDate: Date; shoe_item: ShoeItem }[] | undefined;
+      }>({
+        query: gql`
+          subscription subscribeToPurchases {
+            purchases {
+              purchase_date
+              shoe_item {
+                id
+                size
+                dateCreated
+                shoe {
+                  brand
+                  id
+                  imgUrl
+                  model
+                  price
+                  rating
+                }
+              }
+            }
+          }
+        `,
+      })
+      .pipe(
+        map((result) =>
+          result.data!.purchases?.flatMap((p) => {
+            const item = p.shoe_item;
+
+            const newItem: ShoeItem = {
+              id: item.id,
+              size: item.size,
+              dateCreated: new Date(item.dateCreated),
+              shoe: item.shoe,
+              datePurchased: p.purchaseDate
+                ? new Date(p.purchaseDate)
+                : undefined,
+            };
+
+            return newItem;
+          }),
+        ),
+      );
   }
 
   insertPurchase(userId: string, itemId: string): Observable<Date> {
@@ -96,8 +142,6 @@ export class ApolloService {
           }
         `,
         variables: { userId, itemId },
-        refetchQueries: [{ query: this.GET_ALL_PURCHASES_QUERY }],
-        awaitRefetchQueries: true,
       })
       .pipe(map((result) => result.data!.purchaseItem));
   }

@@ -68,7 +68,7 @@ export class ShoeItemQuery extends QueryEntity<ShoeItemState> {
   }
 
   getBestSeller(): Observable<string> {
-    return this.apollo.getAllPurchases().pipe(
+    return this.apollo.subscribeToPurchases().pipe(
       map((purchases) => {
         const counts = countBy(purchases, (p) => p.shoe.id);
         const best = maxBy(Object.entries(counts), ([, c]) => c);
@@ -101,7 +101,7 @@ export class ShoeItemQuery extends QueryEntity<ShoeItemState> {
 
   isItemSoldOut(id: string): Observable<ShoeItem | undefined> {
     return this.apollo
-      .getAllPurchases()
-      .pipe(map((shoes) => shoes.find((shoe) => shoe.id === id)));
+      .subscribeToPurchases()
+      .pipe(map((shoes) => shoes?.find((shoe) => shoe.id === id)));
   }
 }
