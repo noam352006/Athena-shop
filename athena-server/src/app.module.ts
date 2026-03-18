@@ -7,9 +7,13 @@ import { BasicShoeService } from './services/basicShoe.service';
 import { ShoesService } from './services/item.service';
 import { UserService } from './services/user.service';
 import { ApolloClientProvider } from './apollo.provider';
+import { ConfigModule } from '@nestjs/config';
 
 @Module({
   imports: [
+    ConfigModule.forRoot({
+      isGlobal: true,
+    }),
     GraphQLModule.forRoot<ApolloDriverConfig>({
       driver: ApolloDriver,
       autoSchemaFile: true, // Nest ייצר את קובץ הסכימה לבד בזיכרון
