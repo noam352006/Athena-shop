@@ -6,7 +6,7 @@ import { Brands } from "../../enums/brand.enum";
 import { distinctUntilChanged, map, Observable, of, startWith, switchMap } from "rxjs";
 import { ShoeItem } from "../../intrefaces/shoeItem";
 import { partialUser } from "../../intrefaces/partialUser";
-import { ApolloService } from "src/app/services/apollo.service/apollo.service";
+import { UserQueries } from "src/app/services/apollo.service/queries/user.queries";
 
 @Injectable({ providedIn: 'root' })
 export class AuthQuery extends Query<AuthState> {
@@ -20,7 +20,7 @@ export class AuthQuery extends Query<AuthState> {
     return this.getValue().connectedUser;
   }
 
-  constructor(protected override store: AuthStore, private apollo: ApolloService
+  constructor(protected override store: AuthStore, private apollo: UserQueries
   ) {
     super(store);
 

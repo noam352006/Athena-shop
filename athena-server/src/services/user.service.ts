@@ -111,6 +111,7 @@ export class UserService {
     }>({
       query: QUERY,
       variables: { id: userId },
+      fetchPolicy: 'network-only'
     });
 
     return result.data?.purchases?.flatMap((p) => p.shoe_item.shoe.brand);

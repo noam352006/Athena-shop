@@ -7,7 +7,7 @@ import { partialUser } from "../../intrefaces/partialUser";
 
 @Injectable({ providedIn: 'root' })
 export class AuthService {
-    constructor(private store: AuthStore, private authQuery: AuthQuery) { }
+    constructor(private store: AuthStore) { }
 
     logIn(user: partialUser): void {
         this.store.update({ connectedUser: user });
