@@ -3,7 +3,10 @@
 // The list of file replacements can be found in `angular.json`.
 
 export const environment = {
-  production: false
+  production: false,
+  hsuraAdminSecret: 'EwBu!b6BtYus83u',
+  hasuraWsUrl: 'wss://helpful-crow-38.hasura.app/v1/graphql',
+  serverUrl: 'http://localhost:3000/graphql'
 };
 
 /*
