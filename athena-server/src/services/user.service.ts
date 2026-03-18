@@ -20,23 +20,14 @@ export class UserService {
         }
       }
     `;
-    try {
-      const result = await this.client.mutate<{ insert_users_one: any }>({
-        mutation: MUTATION,
-        variables: { password, user_name: userName },
-      });
+    const result = await this.client.mutate<{ insert_users_one: any }>({
+      mutation: MUTATION,
+      variables: { password, user_name: userName },
+    });
 
-      const user = result.data?.insert_users_one;
-      return {
-        id: user.id,
-        userName: user.user_name,
-        role: user.role,
-        dateCreated: new Date(user.date_created),
-      };
-    } catch (error) {
-      console.error('Error fetching SHOE ITEMS from Hasura:', error);
-      throw error;
-    }
+    const user = result.data?.insert_users_one;
+
+    return this.mapUser(user);
   }
 
   //-----------QUERIES----------
@@ -55,30 +46,20 @@ export class UserService {
       }
     `;
 
-    try {
-      const result = await this.client.query<{ users_by_pk: any }>({
-        query: QUERY,
-        variables: {
-          password: userPassword,
-          user_name: userName,
-        },
-        fetchPolicy: 'network-only',
-      });
+    const result = await this.client.query<{ users_by_pk: any }>({
+      query: QUERY,
+      variables: {
+        password: userPassword,
+        user_name: userName,
+      },
+      fetchPolicy: 'network-only',
+    });
 
-      const user = result.data?.users_by_pk;
+    const user = result.data?.users_by_pk;
 
-      if (!user) return null;
+    if (!user) return null;
 
-      return {
-        id: user.id,
-        userName: user.user_name,
-        role: user.role ?? UserRole.Guest,
-        dateCreated: new Date(user.date_created),
-      };
-    } catch (error) {
-      console.error('Error fetching user:', error);
-      throw error;
-    }
+    return this.mapUser(user);
   }
 
   async getUserByName(userName: string): Promise<PartialUser | null> {
@@ -94,30 +75,20 @@ export class UserService {
       }
     `;
 
-    try {
-      const result = await this.client.query<{
-        users: any;
-      }>({
-        query: QUERY,
-        variables: {
-          user_name: userName,
-        },
-      });
+    const result = await this.client.query<{
+      users: any;
+    }>({
+      query: QUERY,
+      variables: {
+        user_name: userName,
+      },
+    });
 
-      const user = result.data?.users[0];
+    const user = result.data?.users[0];
 
-      if (!user) return null;
+    if (!user) return null;
 
-      return {
-        id: user.id,
-        userName: user.user_name,
-        role: user.role ?? UserRole.Guest,
-        dateCreated: new Date(user.date_created),
-      };
-    } catch (error) {
-      console.error('Error fetching user by name:', error);
-      throw error;
-    }
+    return this.mapUser(user);
   }
 
   async getUserPurchasedBrands(userId: string): Promise<string[] | undefined> {
@@ -135,18 +106,22 @@ export class UserService {
       }
     `;
 
-    try {
-      const result = await this.client.query<{
-        purchases: { shoe_item: { shoe: { brand: string } } }[];
-      }>({
-        query: QUERY,
-        variables: { id: userId },
-      });
+    const result = await this.client.query<{
+      purchases: { shoe_item: { shoe: { brand: string } } }[];
+    }>({
+      query: QUERY,
+      variables: { id: userId },
+    });
 
-      return result.data?.purchases.flatMap((p) => p.shoe_item.shoe.brand);
-    } catch (error) {
-      console.error('Error fetching purchased brands:', error);
-      throw error;
-    }
+    return result.data?.purchases?.flatMap((p) => p.shoe_item.shoe.brand);
+  }
+
+  mapUser(queryResult: any): PartialUser {
+    return {
+      id: queryResult.id,
+      userName: queryResult.user_name,
+      role: queryResult.role ?? UserRole.Guest,
+      dateCreated: new Date(queryResult.date_created),
+    };
   }
 }
