@@ -3,9 +3,9 @@ import { GraphQLModule } from '@nestjs/graphql';
 import { ApolloDriver, ApolloDriverConfig } from '@nestjs/apollo';
 import { AppService } from './app.service';
 import { AppResolver } from './app.resolver';
-import { BasicShoeService } from './common/graphql/basicShoe.service';
-import { ShoesService } from './common/graphql/item.service';
-import { UserService } from './common/graphql/user.service';
+import { BasicShoeService } from './common/graphqL/basicShoe.service';
+import { ShoesService } from './common/graphqL/item.service';
+import { UserService } from './common/graphqL/user.service';
 import { ApolloClientProvider } from './apollo.provider';
 
 @Module({
