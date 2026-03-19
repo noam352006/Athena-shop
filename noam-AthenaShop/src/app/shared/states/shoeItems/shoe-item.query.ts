@@ -4,15 +4,17 @@ import { ShoeItem } from '../../intrefaces/shoeItem';
 import { ShoeItemState, ShoeItemStore } from './shoe-item.store';
 import { combineLatest, filter, map, Observable } from 'rxjs';
 import { FilterState } from '../../intrefaces/filterState';
-import { ApolloService } from 'src/app/services/apollo.service/apollo.service';
 import { BasicShoe } from '../../intrefaces/basicShoe';
 import { countBy, maxBy } from 'lodash';
+import { ItemQueries } from 'src/app/services/apollo.service/queries/item.queries';
+import { BasicShoeQueries } from 'src/app/services/apollo.service/queries/basicShoe.query';
 
 @Injectable({ providedIn: 'root' })
 export class ShoeItemQuery extends QueryEntity<ShoeItemState> {
   constructor(
     protected override store: ShoeItemStore,
-    private readonly apollo: ApolloService,
+    private readonly itemQueries: ItemQueries,
+    private readonly basicShoeQueries: BasicShoeQueries
   ) {
     super(store);
   }
@@ -68,7 +70,7 @@ export class ShoeItemQuery extends QueryEntity<ShoeItemState> {
   }
 
   getBestSeller(): Observable<string> {
-    return this.apollo.subscribeToPurchases().pipe(
+    return this.itemQueries.subscribeToPurhases().pipe(
       map((purchases) => {
         const counts = countBy(purchases, (p) => p.shoe.id);
         const best = maxBy(Object.entries(counts), ([, c]) => c);
@@ -86,7 +88,7 @@ export class ShoeItemQuery extends QueryEntity<ShoeItemState> {
   }
 
   getBasicShoeById(id: string): Observable<BasicShoe | undefined> {
-    return this.apollo
+    return this.basicShoeQueries
       .getAllBasicShoes()
       .pipe(map((shoes) => shoes.find((shoe) => shoe.id === id)));
   }
@@ -100,8 +102,8 @@ export class ShoeItemQuery extends QueryEntity<ShoeItemState> {
   }
 
   isItemSoldOut(id: string): Observable<ShoeItem | undefined> {
-    return this.apollo
-      .subscribeToPurchases()
+    return this.itemQueries
+      .subscribeToPurhases()
       .pipe(map((shoes) => shoes?.find((shoe) => shoe.id === id)));
   }
 }

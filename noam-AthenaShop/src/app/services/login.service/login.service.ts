@@ -1,9 +1,9 @@
 import { Injectable } from '@angular/core';
 import { AuthService } from 'src/app/shared/states/auth/auth.service';
 import { Router } from '@angular/router';
-import { ApolloService } from '../apollo.service/apollo.service';
 import { firstValueFrom } from 'rxjs';
 import { partialUser } from 'src/app/shared/intrefaces/partialUser';
+import { UserQueries } from '../apollo.service/queries/user.queries';
 
 @Injectable({
   providedIn: 'root',
@@ -12,12 +12,12 @@ export class LoginService {
   constructor(
     private authService: AuthService,
     private router: Router,
-    private apollo: ApolloService,
+    private userQueries: UserQueries,
   ) {}
 
   async doesNameExists(name: string): Promise<boolean> {
      const searchesUserName = await firstValueFrom(
-      this.apollo.getUserByName(name),
+      this.userQueries.getUserByName(name),
     );
  
     return searchesUserName? true : false
@@ -29,7 +29,7 @@ export class LoginService {
     userName: string,
   ): Promise<partialUser | null> {
     try {
-      const user$ = this.apollo.getUserBycredentials(password, userName); // Observable<User>
+      const user$ = this.userQueries.getUserBycredentials(password, userName); // Observable<User>
       const user = await firstValueFrom(user$);
       return user;
     } catch (err) {
@@ -50,7 +50,7 @@ export class LoginService {
 
   async signUp(password: string, userName: string): Promise<void> {
     const newUser = await firstValueFrom(
-      this.apollo.insertUser(password, userName),
+      this.userQueries.insertUser(password, userName),
     );
     if (!newUser) {
       console.error('somthing went wrong');

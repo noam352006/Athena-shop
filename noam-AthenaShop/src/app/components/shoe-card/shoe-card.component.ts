@@ -1,8 +1,9 @@
-import {Component,Input, SimpleChanges } from '@angular/core';
+import { Component, Input, SimpleChanges } from '@angular/core';
 import { ShoeItem } from 'src/app/shared/intrefaces/shoeItem';
 import { PopUpComponent } from '../pop-up/pop-up.component';
 import { MainService } from 'src/app/services/main.service/main.service';
 import { MatDialog } from '@angular/material/dialog';
+import { BehaviorSubject, tap } from 'rxjs';
 
 @Component({
   selector: 'app-shoe-card',
@@ -21,17 +22,21 @@ export class ShoeCardComponent {
   ngOnChanges(changes: SimpleChanges): void {
     if (changes['currShoe'] && this.currShoe) {
       const result = this.mainService.getShoeSizes(this.currShoe.shoe.id);
-      const isPurchased = this.mainService.isItemSoldOut(this.currShoe.id);
       this.sizes = result;
-      isPurchased.subscribe((s) => (this.isSoldOut = s? true : false));
+      this.mainService
+        .isItemSoldOut(this.currShoe.id)
+        .subscribe((isSoldOut) => {
+          this.isPurchased$.next(isSoldOut ? true : false);
+        });
     }
   }
+
+  isPurchased$ = new BehaviorSubject<boolean>(false);
 
   buttonState!: string;
   stars = [1, 2, 3, 4, 5];
   chosenStars = 0;
   sizes!: number[];
-  isSoldOut!: boolean;
 
   rate(number: number) {
     this.chosenStars = number;
@@ -46,14 +51,14 @@ export class ShoeCardComponent {
 
   purchaseItem(): void {
     this.mainService.purchaseItem(this.currShoe.id);
-    this.openDialog(this.isSoldOut);
-    this.buttonState = "disabled"
+    this.openDialog();
+    this.buttonState = 'disabled';
   }
 
-  openDialog(canPurchase: Boolean): void {
+  openDialog(): void {
     const dialogRef = this.dialog.open(PopUpComponent, {
       width: '30em',
-      data: { success: !canPurchase },
+      data: { success: true },
     });
   }
 }

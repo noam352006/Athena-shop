@@ -2,7 +2,6 @@ import { Component } from '@angular/core';
 import { MainService } from 'src/app/services/main.service/main.service';
 import { ShoeItem } from 'src/app/shared/intrefaces/shoeItem';
 import { Observable } from 'rxjs';
-import { ApolloService } from 'src/app/services/apollo.service/apollo.service';
 import { BasicShoe } from 'src/app/shared/intrefaces/basicShoe';
 
 @Component({
@@ -12,7 +11,7 @@ import { BasicShoe } from 'src/app/shared/intrefaces/basicShoe';
 })
 export class MainPageComponent {
 
-  constructor(private service: MainService, private aps: ApolloService) { }
+  constructor(private service: MainService) { }
 
   bestSeller$: Observable<BasicShoe | undefined> = this.service.getBestSeller();
   newestShoe$: Observable<ShoeItem | null> = this.service.getNewestShoe();

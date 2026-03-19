@@ -17,27 +17,47 @@ export class AppResolver {
   //------BASIC SHOES---------------
   @Query(() => [BasicShoe])
   async getAllBasicShoes() {
-    return await this.basicShoeService.getAllBasicShoes();
+    try {
+      return await this.basicShoeService.getAllBasicShoes();
+    } catch (error) {
+      console.error('Error fetching basic shoes at getAllBasicShoes()', error);
+      throw error;
+    }
   }
 
   //------------SHOE ITEMS-----------
   @Query(() => [ShoeItem])
   async getAllShoes() {
-    return await this.itemService.getAllItems();
+    try {
+      return await this.itemService.getAllItems();
+    } catch (error) {
+      console.error('Error fetching shoes at getAllShoes()', error);
+      throw error;
+    }
   }
 
   @Query(() => [ShoeItem])
   async getAllPurchases() {
-    return await this.itemService.getAllPurchases();
+    try {
+      return await this.itemService.getAllPurchases();
+    } catch (error) {
+      console.error('Error fetching purchases at getAllPurchases()', error);
+      throw error;
+    }
   }
 
-  @Mutation(() => Date)
+  @Mutation(() => Date, { nullable: true })
   async purchaseItem(
     @Args('userId') userId: string,
     @Args('itemId') shoeId: string,
   ) {
-    const result = await this.itemService.purchaseItem(userId, shoeId);
-    return result ? new Date(result) : undefined;
+    try {
+      const result = await this.itemService.purchaseItem(userId, shoeId);
+      return result ? new Date(result) : undefined;
+    } catch (error) {
+      console.error('Error purchasing item at purchaseItem()', error);
+      throw error;
+    }
   }
 
   //-----------USERS------------------
@@ -46,17 +66,32 @@ export class AppResolver {
     @Args('userPassword') userPassword: string,
     @Args('userName') userName: string,
   ) {
-    return await this.userService.getUserByCredentials(userPassword, userName);
+    try {
+      return await this.userService.getUserByCredentials(userPassword, userName);
+    } catch (error) {
+      console.error('Error fetching user by credentials at getUserByCredentials()', error);
+      throw error;
+    }
   }
 
   @Query(() => PartialUser, { nullable: true })
   async getUserByName(@Args('userName') userName: string) {
-    return await this.userService.getUserByName(userName);
+    try {
+      return await this.userService.getUserByName(userName);
+    } catch (error) {
+      console.error('Error fetching user by name at getUserByName()', error);
+      throw error;
+    }
   }
 
   @Query(() => [String])
   async getUserPurchasedBrands(@Args('user_id') userId: string) {
-    return await this.userService.getUserPurchasedBrands(userId);
+    try {
+      return await this.userService.getUserPurchasedBrands(userId);
+    } catch (error) {
+      console.error('Error fetching purchased brands at getUserPurchasedBrands()', error);
+      throw error;
+    }
   }
 
   @Mutation(() => PartialUser)
@@ -64,6 +99,11 @@ export class AppResolver {
     @Args('userPassword') userPassword: string,
     @Args('userName') userName: string,
   ) {
-    return await this.userService.signUp(userPassword, userName);
+    try {
+      return await this.userService.signUp(userPassword, userName);
+    } catch (error) {
+      console.error('Error inserting user at signUp()', error);
+      throw error;
+    }
   }
 }

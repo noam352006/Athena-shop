@@ -1,15 +1,19 @@
 import { Provider } from '@nestjs/common';
 import { ApolloClient, InMemoryCache, HttpLink } from '@apollo/client/core';
 import fetch from 'cross-fetch';
+import { ConfigService } from '@nestjs/config';
 
 export const ApolloClientProvider: Provider = {
   provide: ApolloClient,
-  useFactory: () => {
+  inject: [ConfigService],
+  useFactory: (configService: ConfigService) => {
+
+    console.log(configService.get<string>('HASURA_ADMIN_SECRET')!)
     return new ApolloClient({
       link: new HttpLink({
-        uri: 'https://helpful-crow-38.hasura.app/v1/graphql', 
+        uri:  configService.get<string>('HASURA_URL')!, 
         headers: {
-          'x-hasura-admin-secret': 'NU6VbveJ97irpguhPSWQtrXhhvFCq4kP75IKKkql3viL0zUO0HCDJZZecH8txTjU',
+          'x-hasura-admin-secret': configService.get<string>('HASURA_ADMIN_SECRET')!,
         },
         fetch,
       }),

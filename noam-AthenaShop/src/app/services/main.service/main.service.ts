@@ -7,7 +7,7 @@ import { ShoeItem } from 'src/app/shared/intrefaces/shoeItem';
 import { AuthQuery } from 'src/app/shared/states/auth/auth.query';
 import { ShoeItemQuery } from 'src/app/shared/states/shoeItems/shoe-item.query';
 import { shoeItemService } from 'src/app/shared/states/shoeItems/shoe-item.service';
-import { ApolloService } from '../apollo.service/apollo.service';
+import { ItemQueries } from '../apollo.service/queries/item.queries';
 
 @Injectable({
   providedIn: 'root',
@@ -18,7 +18,7 @@ export class MainService {
     private router: Router,
     private authQuery: AuthQuery,
     private shoeService: shoeItemService,
-    private apollo: ApolloService,
+    private itemQueries: ItemQueries
   ) {}
 
   navToShop(): void {
@@ -87,7 +87,7 @@ export class MainService {
   purchaseItem(shoeId: string): void {
     const userId = this.authQuery.getCurrUser?.id;
     if (userId) {
-      this.apollo.insertPurchase(userId, shoeId).subscribe(async (date) => {
+      this.itemQueries.insertPurchase(userId, shoeId).subscribe(async (date) => {
         console.log(date);
       });
     }

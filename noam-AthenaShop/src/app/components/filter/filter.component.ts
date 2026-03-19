@@ -19,8 +19,8 @@ export class FilterComponent {
     this.currFilters$
       .pipe(
         take(1),
-        tap((f) => {
-          if (f.size === chosenSize) {
+        tap((filter) => {
+          if (filter.size === chosenSize) {
             this.shoeService.updateFilter({ size: undefined });
           } else {
             this.shoeService.updateFilter({ size: chosenSize });

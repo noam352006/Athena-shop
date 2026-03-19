@@ -5,21 +5,22 @@ import { getMainDefinition } from '@apollo/client/utilities';
 import { Provider } from '@angular/core';
 import { APOLLO_OPTIONS } from 'apollo-angular';
 import { HttpLink } from 'apollo-angular/http';
+import { environment } from 'src/environments/environment';
 
 export const ApolloClientProvider: Provider = {
 provide: APOLLO_OPTIONS,
   useFactory: (httpLink: HttpLink) => {
     
     const http = httpLink.create({
-      uri: 'http://localhost:3000/graphql',
+      uri: environment.serverUrl,
     });
 
     const ws = new GraphQLWsLink(
       createClient({
-        url: 'wss://helpful-crow-38.hasura.app/v1/graphql', 
+        url: environment.hasuraWsUrl, 
         connectionParams: {
           headers: {
-            'x-hasura-admin-secret': 'NU6VbveJ97irpguhPSWQtrXhhvFCq4kP75IKKkql3viL0zUO0HCDJZZecH8txTjU',
+            'x-hasura-admin-secret': environment.hsuraAdminSecret,
           },
         },
       })

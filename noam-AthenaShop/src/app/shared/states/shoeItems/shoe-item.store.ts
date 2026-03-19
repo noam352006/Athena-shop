@@ -2,7 +2,7 @@ import { Injectable } from '@angular/core';
 import { EntityStore, EntityState, StoreConfig } from '@datorama/akita';
 import { ShoeItem } from '../../intrefaces/shoeItem';
 import { FilterState } from '../../intrefaces/filterState';
-import { ApolloService } from 'src/app/services/apollo.service/apollo.service';
+import { ItemQueries } from 'src/app/services/apollo.service/queries/item.queries';
 
 export interface ShoeItemState extends EntityState<ShoeItem, number> {
   stateFilters: FilterState;
@@ -11,7 +11,7 @@ export interface ShoeItemState extends EntityState<ShoeItem, number> {
 @Injectable({ providedIn: 'root' })
 @StoreConfig({ name: 'shoeList', idKey: 'id' })
 export class ShoeItemStore extends EntityStore<ShoeItemState, ShoeItem> {
-  constructor(private apollo: ApolloService) {
+  constructor(private itemQueries: ItemQueries) {
     super({
       stateFilters: {
         size: undefined,
@@ -25,7 +25,7 @@ export class ShoeItemStore extends EntityStore<ShoeItemState, ShoeItem> {
   }
 
   loadItems(): void {
-    this.apollo.getAllItems().subscribe((items) => {
+    this.itemQueries.getAllItems().subscribe((items) => {
       this.add(items);
     });
   }

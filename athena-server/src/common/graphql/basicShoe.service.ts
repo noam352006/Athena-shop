@@ -20,17 +20,12 @@ export class BasicShoeService {
       }
     `;
 
-    try {
-      const result = await this.client.query<{
-        basic_shoe: BasicShoe[] | undefined;
-      }>({
-        query: QUERY,
-      });
+    const result = await this.client.query<{
+      basic_shoe: BasicShoe[] | undefined;
+    }>({
+      query: QUERY,
+    });
 
-      return result.data?.basic_shoe;
-    } catch (error) {
-      console.error('Error fetching basic shoes:', error);
-      throw error;
-    }
+    return result.data?.basic_shoe;
   }
 }
