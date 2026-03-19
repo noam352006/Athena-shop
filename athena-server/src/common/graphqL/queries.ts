@@ -1,10 +1,9 @@
 import { gql } from '@apollo/client';
 
 //----------------BASIC SHOES-----------------------
-
 export const getAllBasicShoesQuery = gql`
-  query getAllShoes {
-    basic_shoe {
+  query getAllBasicShoes {
+    basicShoes: basic_shoe {
       brand
       id
       model
@@ -16,10 +15,9 @@ export const getAllBasicShoesQuery = gql`
 `;
 
 //------------------SHOE ITEMS---------------------
-
 export const getAllShoeItemsQuery = gql`
-  query getAllItems {
-    shoe_item {
+  query getAllShoeItems {
+    shoeItems: shoe_item {
       id
       size
       dateCreated
@@ -41,8 +39,8 @@ export const getAllShoeItemsQuery = gql`
 export const getAllPurchasesQuery = gql`
   query getAllPurchases {
     purchases {
-      purchase_date
-      shoe_item {
+      purchaseDate: purchase_date
+      shoeItems: shoe_item {
         id
         size
         dateCreated
@@ -60,7 +58,6 @@ export const getAllPurchasesQuery = gql`
 `;
 
 //-----------------------USERS----------------------
-
 export const getUserByCredentialsQuery = gql`
   query getUserByLogin($password: String!, $user_name: String!) {
     users_by_pk(password: $password, user_name: $user_name) {
@@ -87,7 +84,7 @@ export const getUserByNameQuery = gql`
 export const getUserPurchasedBrandsQuery = gql`
   query getUserPurchasedBrands($id: uuid!) {
     purchases(where: { user_id: { _eq: $id } }) {
-      shoe_item {
+      shoeItems: shoe_item {
         shoe {
           brand
         }

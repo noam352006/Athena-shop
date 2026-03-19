@@ -1,6 +1,6 @@
 import { ApolloClient, gql } from '@apollo/client';
 import { Injectable } from '@nestjs/common';
-import { PartialUser, UserRole } from 'src/common/types/partialUser.type';
+import { PartialUser } from 'src/common/types/partialUser.type';
 import { mapUser } from '../util/query-result-map';
 import { signUpMutation } from './mutation';
 import { getUserByCredentialsQuery, getUserByNameQuery } from './queries';

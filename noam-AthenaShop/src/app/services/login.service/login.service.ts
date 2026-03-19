@@ -16,11 +16,11 @@ export class LoginService {
   ) {}
 
   async doesNameExists(name: string): Promise<boolean> {
-     const searchesUserName = await firstValueFrom(
+    const searchesUserName = await firstValueFrom(
       this.userQueries.getUserByName(name),
     );
- 
-    return searchesUserName? true : false
+
+    return searchesUserName ? true : false;
   }
 
   // get user from db with password and user name
@@ -40,8 +40,7 @@ export class LoginService {
 
   //if user exists log them in - initialize state
   connectUser(user: partialUser): void {
-    if (!user) {
-    } else {
+    if (user) {
       this.authService.logIn(user);
       localStorage.setItem('connectedUser', JSON.stringify(user));
       this.router.navigate(['']);

@@ -2,6 +2,9 @@ import { Injectable } from '@angular/core';
 import { Apollo, gql } from 'apollo-angular';
 import { map, Observable, of } from 'rxjs';
 import { ShoeItem } from 'src/app/shared/intrefaces/shoeItem';
+import { subscribeToPurchases } from '../subscribes';
+import { getAllShoeItemsQuery } from '../queries';
+import { inserPurchaseMutation } from '../mutations';
 
 @Injectable({
   providedIn: 'root',
@@ -14,53 +17,10 @@ export class ItemQueries {
     getAllItems(): Observable<ShoeItem[]> {
       return this.apollo
         .query<{ getAllShoeItems: ShoeItem[] }>({
-          query: gql`
-            query {
-              getAllShoeItems {
-                id
-                size
-                dateCreated
-                datePurchased
-                shoe {
-                  id
-                  brand
-                  model
-                  price
-                  rating
-                  imgUrl
-                }
-              }
-            }
-          `,
+          query: getAllShoeItemsQuery,
           fetchPolicy: 'network-only',
         })
         .pipe(map((result) => result.data.getAllShoeItems));
-    }
-  
-    ///replaced by subscribeToPurchases 
-    getAllPurchases(): Observable<ShoeItem[]> {
-      return this.apollo
-        .watchQuery<{ getAllPurchases: ShoeItem[] }>({
-          query: gql`
-            query {
-              getAllPurchases {
-                id
-                size
-                dateCreated
-                datePurchased
-                shoe {
-                  id
-                  brand
-                  model
-                  price
-                  rating
-                  imgUrl
-                }
-              }
-            }
-          `,
-        })
-        .valueChanges.pipe(map((result) => result.data.getAllPurchases));
     }
 
     //---------------------SUBSCRIPTION----------------------------
@@ -70,26 +30,7 @@ export class ItemQueries {
         .subscribe<{
           purchases: { purchaseDate: Date; shoe_item: ShoeItem }[] | undefined;
         }>({
-          query: gql`
-            subscription subscribeToPurchases {
-              purchases {
-                purchase_date
-                shoe_item {
-                  id
-                  size
-                  dateCreated
-                  shoe {
-                    brand
-                    id
-                    imgUrl
-                    model
-                    price
-                    rating
-                  }
-                }
-              }
-            }
-          `,
+          query: subscribeToPurchases,
         })
         .pipe(
           map((result) =>
@@ -114,17 +55,13 @@ export class ItemQueries {
 
     //------------------MUTATIONS-----------------------
   
-    insertPurchase(userId: string, itemId: string): Observable<Date> {
+    insertPurchase(userId: string, itemId: string): Observable<Date | undefined> {
       console.log('adding purchase', itemId, userId);
       return this.apollo
         .mutate<{ purchaseItem: Date }>({
-          mutation: gql`
-            mutation ($userId: String!, $itemId: String!) {
-              purchaseItem(userId: $userId, itemId: $itemId)
-            }
-          `,
+          mutation: inserPurchaseMutation,
           variables: { userId, itemId },
         })
-        .pipe(map((result) => result.data!.purchaseItem));
+        .pipe(map((result) => result.data?.purchaseItem));
     }
 }

@@ -2,6 +2,7 @@ import { Injectable } from '@angular/core';
 import { Apollo, gql } from 'apollo-angular';
 import { map, Observable, of } from 'rxjs';
 import { BasicShoe } from 'src/app/shared/intrefaces/basicShoe';
+import { getAllBasicShoesQuery } from '../queries';
 
 @Injectable({
   providedIn: 'root',
@@ -13,18 +14,7 @@ export class BasicShoeQueries {
   getAllBasicShoes(): Observable<BasicShoe[]> {
     return this.apollo
       .watchQuery<{ getAllBasicShoes: BasicShoe[] }>({
-        query: gql`
-          query {
-            getAllBasicShoes {
-              id
-              brand
-              model
-              price
-              rating
-              imgUrl
-            }
-          }
-        `,
+        query: getAllBasicShoesQuery,
       })
       .valueChanges.pipe(map((result) => result.data.getAllBasicShoes));
   }

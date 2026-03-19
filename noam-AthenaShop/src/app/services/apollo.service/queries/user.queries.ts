@@ -2,6 +2,8 @@ import { Injectable } from '@angular/core';
 import { Apollo, gql } from 'apollo-angular';
 import { map, Observable, of } from 'rxjs';
 import { partialUser } from 'src/app/shared/intrefaces/partialUser';
+import { signUserUpMutation } from '../mutations';
+import { getUserByCredentialsQuery, getUserByNameQuery, getUserPurchasedBrandsQuery } from '../queries';
 
 @Injectable({
   providedIn: 'root',
@@ -16,19 +18,7 @@ export class UserQueries {
   ): Observable<partialUser | null> {
     return this.apollo
       .watchQuery<{ getUserByCredentials: partialUser | null }>({
-        query: gql`
-          query ($userPassword: String!, $userName: String!) {
-            getUserByCredentials(
-              userPassword: $userPassword
-              userName: $userName
-            ) {
-              id
-              userName
-              role
-              dateCreated
-            }
-          }
-        `,
+        query: getUserByCredentialsQuery,
         variables: { userPassword, userName },
         fetchPolicy: 'network-only',
       })
@@ -38,16 +28,7 @@ export class UserQueries {
   getUserByName(userName: string): Observable<partialUser | null> {
     return this.apollo
       .watchQuery<{ getUserByName: partialUser | null }>({
-        query: gql`
-          query ($userName: String!) {
-            getUserByName(userName: $userName) {
-              id
-              userName
-              role
-              dateCreated
-            }
-          }
-        `,
+        query: getUserByNameQuery,
         variables: { userName },
         fetchPolicy: 'network-only',
       })
@@ -58,11 +39,7 @@ export class UserQueries {
     if (!userId) return of([]);
     return this.apollo
       .watchQuery<{ getUserPurchasedBrands: string[] }>({
-        query: gql`
-          query ($userId: String!) {
-            getUserPurchasedBrands(user_id: $userId)
-          }
-        `,
+        query: getUserPurchasedBrandsQuery,
         variables: { userId },
         fetchPolicy: 'network-only',
       })
@@ -73,16 +50,7 @@ export class UserQueries {
   insertUser(userPassword: string, userName: string): Observable<partialUser> {
     return this.apollo
       .mutate<{ signUserUp: partialUser }>({
-        mutation: gql`
-          mutation ($userPassword: String!, $userName: String!) {
-            signUserUp(userPassword: $userPassword, userName: $userName) {
-              id
-              userName
-              role
-              dateCreated
-            }
-          }
-        `,
+        mutation: signUserUpMutation,
         variables: { userPassword, userName },
       })
       .pipe(map((result) => result.data!.signUserUp));

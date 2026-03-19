@@ -10,7 +10,6 @@ export class ShoesService {
   constructor(private readonly client: ApolloClient) {}
 
   //------MUTATIONS----------------
-
   async purchaseItem(
     userId: string,
     itemID: string,
@@ -32,24 +31,22 @@ export class ShoesService {
 
   //---------------------------QUERIES------------------
   async getAllShoeItems(): Promise<ShoeItem[] | undefined> {
-    const result = await this.client.query<{ shoe_item: any[] }>({
+    const result = await this.client.query<{ shoeItems: any[] }>({
       query: getAllShoeItemsQuery,
-      fetchPolicy: 'network-only',
     });
 
-    return result.data?.shoe_item.map((item) => mapItem(item));
+    return result.data?.shoeItems.map((item) => mapItem(item));
   }
 
   async getAllPurchases(): Promise<ShoeItem[] | undefined> {
     const result = await this.client.query<{
-      purchases: { purchaseDate: Date; shoe_item: ShoeItem }[] | undefined;
+      purchases: { purchaseDate: Date; shoeItems: ShoeItem }[] | undefined;
     }>({
       query: getAllPurchasesQuery,
-      fetchPolicy: 'network-only',
     });
 
     return result.data?.purchases?.flatMap((p) =>
-      mapPurchase(p.shoe_item, p.purchaseDate),
+      mapPurchase(p.shoeItems, p.purchaseDate),
     );
   }
 }

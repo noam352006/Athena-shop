@@ -8,18 +8,22 @@ export interface ShoeItemState extends EntityState<ShoeItem, number> {
   stateFilters: FilterState;
 }
 
+export function createInitialState(): ShoeItemState {
+  return {
+    stateFilters: {
+      size: undefined,
+      minPrice: 0,
+      maxPrice: 200,
+      brands: undefined,
+    },
+  };
+}
+
 @Injectable({ providedIn: 'root' })
 @StoreConfig({ name: 'shoeList', idKey: 'id' })
 export class ShoeItemStore extends EntityStore<ShoeItemState, ShoeItem> {
   constructor(private itemQueries: ItemQueries) {
-    super({
-      stateFilters: {
-        size: undefined,
-        minPrice: 0,
-        maxPrice: 200,
-        brands: undefined,
-      },
-    });
+    super(createInitialState());
 
     this.loadItems();
   }

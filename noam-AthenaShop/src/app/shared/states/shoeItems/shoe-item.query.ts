@@ -29,10 +29,10 @@ export class ShoeItemQuery extends QueryEntity<ShoeItemState> {
     this.selectAll(),
     this.filters$,
   ]).pipe(
-    map(([shoes, f]) => {
-      const l = this.applyAllFilters(shoes, f);
+    map(([shoes, activeFilters]) => {
+      const filteredShoeItems  = this.applyAllFilters(shoes, activeFilters);
 
-      return this.selectByBrand(l, f.brands);
+      return this.selectByBrand(filteredShoeItems , activeFilters.brands);
     }),
   );
 
@@ -69,18 +69,22 @@ export class ShoeItemQuery extends QueryEntity<ShoeItemState> {
     );
   }
 
+  getAllShoeItems(): ShoeItem[]{
+    return this.getAll()
+  }
+
   getBestSeller(): Observable<string> {
     return this.itemQueries.subscribeToPurhases().pipe(
       map((purchases) => {
         const counts = countBy(purchases, (p) => p.shoe.id);
         const best = maxBy(Object.entries(counts), ([, c]) => c);
-        return best?.[0] ?? 'ba636325-494f-49eb-a48b-1f0c18df38cd';
+        return best?.[0] ?? this.getAll()[0].id;
       }),
     );
   }
 
   selectByBrand(shoeList: ShoeItem[], brands?: string[]): ShoeItem[] {
-    return brands
+    return brands?.length
       ? shoeList.filter((item) =>
           item.shoe.brand.some((v) => brands.includes(v)),
         )

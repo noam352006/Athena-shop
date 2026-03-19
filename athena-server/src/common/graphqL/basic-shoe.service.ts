@@ -9,11 +9,11 @@ export class BasicShoeService {
 
   async getAllBasicShoes(): Promise<BasicShoe[] | null> {
     const result = await this.client.query<{
-      basic_shoe: BasicShoe[] | undefined;
+      basicShoes: BasicShoe[] | undefined;
     }>({
       query: getAllBasicShoesQuery,
     });
 
-    return result.data?.basic_shoe?? null;
+    return result.data?.basicShoes?? null;
   }
 }
