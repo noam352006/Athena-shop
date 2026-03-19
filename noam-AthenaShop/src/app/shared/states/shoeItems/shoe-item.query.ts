@@ -55,7 +55,7 @@ export class ShoeItemQuery extends QueryEntity<ShoeItemState> {
 
   //---------SHOE-ITEMS LIST---------------
 
-  getNewestItem(): Observable<ShoeItem | null> {
+  getNewestItem(): Observable<ShoeItem | undefined> {
     return this.selectAll().pipe(
       filter((shoes) => shoes.length > 0), // מוודאים שיש לפחות ערך אחד
       map((shoes) => {
@@ -66,7 +66,7 @@ export class ShoeItemQuery extends QueryEntity<ShoeItemState> {
         );
         return { ...sorted[0] }; // מחזירים את הכי חדשה
       }),
-    );
+    )?? undefined;
   }
 
   getAllShoeItems(): ShoeItem[]{

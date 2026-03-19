@@ -5,7 +5,7 @@
 </header>
 
 <body class="body">
-    <app-newest-shoe *ngIf="newestShoe$ | async as newest" (goToShop)="navigateToShop()" [currShoe]="newest"></app-newest-shoe>
+    <app-newest-shoe *ngIf="newestShoe as newest" (goToShop)="navigateToShop()" [currShoe]="newest"></app-newest-shoe>
 
     <div class="rec-container ">
         <div class="top">
@@ -31,7 +31,7 @@
                 {{text}}
             </div>
         </div>
-        <div *ngIf="bestSeller$ | async as topShoe">
+        <div *ngIf="bestSeller as topShoe">
         <img class="best-seller-img" [src]="topShoe.imgUrl">
         </div>
     </div>

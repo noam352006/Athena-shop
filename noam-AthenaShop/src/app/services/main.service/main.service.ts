@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import { Router } from '@angular/router';
-import { combineLatest, map, Observable, switchMap } from 'rxjs';
+import { combineLatest, firstValueFrom, map, Observable, switchMap } from 'rxjs';
 import { Brands } from 'src/app/shared/enums/brand.enum';
 import { BasicShoe } from 'src/app/shared/intrefaces/basicShoe';
 import { ShoeItem } from 'src/app/shared/intrefaces/shoeItem';
@@ -25,8 +25,8 @@ export class MainService {
     this.router.navigate(['/shop']);
   }
 
-  getNewestShoe(): Observable<ShoeItem | null> {
-    return this.shoeQuery.getNewestItem();
+  async getNewestShoe(): Promise<ShoeItem | undefined> {
+    return await firstValueFrom(this.shoeQuery.getNewestItem());
   }
 
   getBrandTopSuggestions(favBrand: string): Observable<ShoeItem[]> {
@@ -64,12 +64,12 @@ export class MainService {
     );
   }
 
-  getBestSeller(): Observable<BasicShoe | undefined> {
-    return this.shoeQuery.getBestSeller().pipe(
+  async getBestSeller(): Promise<BasicShoe | undefined> {
+    return await firstValueFrom( this.shoeQuery.getBestSeller().pipe(
       switchMap((id) => {
         return this.shoeQuery.getBasicShoeById(id);
       }),
-    );
+    ));
   }
 
   close(filter: string): void {

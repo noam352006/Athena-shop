@@ -84,8 +84,8 @@ export const getUserByNameQuery = gql`
 export const getUserPurchasedBrandsQuery = gql`
   query getUserPurchasedBrands($id: uuid!) {
     purchases(where: { user_id: { _eq: $id } }) {
-      shoeItems: shoe_item {
-        shoe {
+      shoeItem: shoe_item {
+        basicShoe: shoe {
           brand
         }
       }

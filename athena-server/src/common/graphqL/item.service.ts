@@ -4,6 +4,7 @@ import { ShoeItem } from 'src/common/types/shoeItem.type';
 import { purchaseItemMutation } from './mutation';
 import { getAllPurchasesQuery, getAllShoeItemsQuery } from './queries';
 import { mapItem, mapPurchase } from '../util/query-result-map';
+import { RawShoeItem } from '../types/rawTypes';
 
 @Injectable()
 export class ShoesService {
@@ -31,21 +32,22 @@ export class ShoesService {
 
   //---------------------------QUERIES------------------
   async getAllShoeItems(): Promise<ShoeItem[] | undefined> {
-    const result = await this.client.query<{ shoeItems: any[] }>({
+    const result = await this.client.query<{ shoeItems: RawShoeItem[] }>({
       query: getAllShoeItemsQuery,
     });
 
-    return result.data?.shoeItems.map((item) => mapItem(item));
+    const items = result.data?.shoeItems ?? [];
+    return items.map((item) => mapItem(item));
   }
 
   async getAllPurchases(): Promise<ShoeItem[] | undefined> {
     const result = await this.client.query<{
-      purchases: { purchaseDate: Date; shoeItems: ShoeItem }[] | undefined;
+      purchases: { purchaseDate: Date; shoeItems: RawShoeItem }[] | undefined;
     }>({
       query: getAllPurchasesQuery,
     });
 
-    return result.data?.purchases?.flatMap((p) =>
+    return result?.data?.purchases?.flatMap((p) =>
       mapPurchase(p.shoeItems, p.purchaseDate),
     );
   }

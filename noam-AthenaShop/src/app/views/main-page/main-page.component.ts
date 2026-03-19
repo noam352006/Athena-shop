@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { MainService } from 'src/app/services/main.service/main.service';
 import { ShoeItem } from 'src/app/shared/intrefaces/shoeItem';
 import { Observable } from 'rxjs';
@@ -9,12 +9,13 @@ import { BasicShoe } from 'src/app/shared/intrefaces/basicShoe';
   templateUrl: './main-page.component.html',
   styleUrls: ['./main-page.component.less']
 })
-export class MainPageComponent {
+export class MainPageComponent implements OnInit{
 
-  constructor(private service: MainService) { }
-
-  bestSeller$: Observable<BasicShoe | undefined> = this.service.getBestSeller();
-  newestShoe$: Observable<ShoeItem | null> = this.service.getNewestShoe();
+  constructor(private service: MainService) { 
+  }
+ 
+  bestSeller: BasicShoe | undefined;
+  newestShoe: ShoeItem | undefined;
   recommendedShoes: Observable<ShoeItem[]> = this.service.getTopSuggestionsForUser();
 
   text =
@@ -24,4 +25,10 @@ We believe every step tells a tale.Founded by passionate footwear enthusiasts, o
   navigateToShop(): void {
     this.service.navToShop();
   }
+
+   async ngOnInit(): Promise<void> {
+    this.bestSeller = await this.service.getBestSeller()
+    this.newestShoe = await this.service.getNewestShoe();
+    }
+
  }

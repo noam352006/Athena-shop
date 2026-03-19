@@ -1,7 +1,8 @@
 import { PartialUser, UserRole } from '../types/partialUser.type';
+import { RawShoeItem, rawUser } from '../types/rawTypes';
 import { ShoeItem } from '../types/shoeItem.type';
 
-export function mapUser(queryResult: any): PartialUser {
+export function mapUser(queryResult: rawUser): PartialUser {
   return {
     id: queryResult.id,
     userName: queryResult.user_name,
@@ -10,7 +11,7 @@ export function mapUser(queryResult: any): PartialUser {
   };
 }
 
-export function mapPurchase(item: any, purchaseDate: Date): ShoeItem {
+export function mapPurchase(item: RawShoeItem, purchaseDate: Date): ShoeItem {
   return {
     id: item.id,
     size: item.size,
@@ -20,7 +21,7 @@ export function mapPurchase(item: any, purchaseDate: Date): ShoeItem {
   };
 }
 
-export function mapItem(item: any): ShoeItem {
+export function mapItem(item: RawShoeItem): ShoeItem {
   return {
     id: item.id,
     size: item.size,

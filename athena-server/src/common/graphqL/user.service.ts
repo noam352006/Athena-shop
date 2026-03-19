@@ -3,23 +3,27 @@ import { Injectable } from '@nestjs/common';
 import { PartialUser } from 'src/common/types/partialUser.type';
 import { mapUser } from '../util/query-result-map';
 import { signUpMutation } from './mutation';
-import { getUserByCredentialsQuery, getUserByNameQuery } from './queries';
+import { getUserByCredentialsQuery, getUserByNameQuery, getUserPurchasedBrandsQuery } from './queries';
+import { rawUser } from '../types/rawTypes';
+import { BasicShoe, Brands } from '../types/basic-shoe.type';
 
 @Injectable()
 export class UserService {
   constructor(private readonly client: ApolloClient) {}
 
   //-------------MUTATIONS--------
-  async signUp(password: string, userName: string): Promise<PartialUser> {
+  async signUp(password: string, userName: string): Promise<PartialUser | undefined> {
 
-    const result = await this.client.mutate<{ insert_users_one: any }>({
+    const result = await this.client.mutate<{ insert_users_one: rawUser }>({
       mutation: signUpMutation,
       variables: { password, user_name: userName },
     });
 
     const user = result.data?.insert_users_one;
 
+    if(user){
     return mapUser(user);
+    }
   }
 
   //-----------QUERIES----------
@@ -28,26 +32,22 @@ export class UserService {
     userName: string,
   ): Promise<PartialUser | null> {
 
-    const result = await this.client.query<{ users_by_pk: any }>({
+    const result = await this.client.query<{ users_by_pk: rawUser }>({
       query: getUserByCredentialsQuery,
       variables: {
         password: userPassword,
         user_name: userName,
       },
-      fetchPolicy: 'network-only',
     });
 
     const user = result.data?.users_by_pk;
 
-    if (!user) return null;
-
-    return mapUser(user);
+    return user ? mapUser(user): null;
   }
 
   async getUserByName(userName: string): Promise<PartialUser | null> {
-
     const result = await this.client.query<{
-      users: any;
+      users: rawUser[];
     }>({
       query: getUserByNameQuery,
       variables: {
@@ -57,34 +57,19 @@ export class UserService {
 
     const user = result.data?.users[0];
 
-    if (!user) return null;
-
-    return mapUser(user);
+    return user ? mapUser(user): null;
   }
 
   async getUserPurchasedBrands(userId: string): Promise<string[] | undefined> {
     if (!userId) return [];
 
-    const QUERY = gql`
-      query getUserPurchasedBrands($id: uuid!) {
-        purchases(where: { user_id: { _eq: $id } }) {
-          shoe_item {
-            shoe {
-              brand
-            }
-          }
-        }
-      }
-    `;
-
     const result = await this.client.query<{
-      purchases: { shoe_item: { shoe: { brand: string } } }[];
+      purchases: { shoeItem: { basicShoe: {brand: Brands[]} } }[];
     }>({
-      query: QUERY,
+      query: getUserPurchasedBrandsQuery,
       variables: { id: userId },
-      fetchPolicy: 'network-only'
     });
 
-    return result.data?.purchases?.flatMap((p) => p.shoe_item.shoe.brand);
+    return result.data?.purchases?.flatMap((purchase) => purchase.shoeItem.basicShoe?.brand);
   }
 }

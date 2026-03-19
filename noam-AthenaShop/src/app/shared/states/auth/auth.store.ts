@@ -3,7 +3,7 @@ import { Injectable } from "@angular/core";
 import { partialUser } from "../../intrefaces/partialUser";
 
 export interface AuthState {
-    connectedUser: partialUser | undefined
+    connectedUser?: partialUser
 }
 
 export function createIntialState(): AuthState {
