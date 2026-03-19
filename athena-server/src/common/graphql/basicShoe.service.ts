@@ -1,6 +1,6 @@
 import { ApolloClient, gql } from '@apollo/client';
 import { Injectable } from '@nestjs/common';
-import { BasicShoe } from 'src/classes/basicShoe';
+import { BasicShoe } from '../types/basicShoe.type';
 
 @Injectable()
 export class BasicShoeService {

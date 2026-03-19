@@ -1,11 +1,10 @@
 import { ApolloClient, gql } from '@apollo/client';
 import { Injectable } from '@nestjs/common';
-import { ShoeItem } from 'src/classes/shoeItem';
+import { ShoeItem } from 'src/common/types/shoeItem.type';
 
 @Injectable()
 export class ShoesService {
   constructor(private readonly client: ApolloClient) {}
-
 
   //------MUTATIONS----------------
 
@@ -28,9 +27,9 @@ export class ShoesService {
         variables: { user_id: userId, shoe_id: itemID },
       });
 
-      const purchseDate = result.data?.insert_purchases_one.purchase_date
-      if(!purchseDate){
-        return undefined
+      const purchseDate = result.data?.insert_purchases_one.purchase_date;
+      if (!purchseDate) {
+        return undefined;
       }
 
       return new Date(purchseDate!);
@@ -67,7 +66,7 @@ export class ShoesService {
     try {
       const result = await this.client.query<{ shoe_item: any[] }>({
         query: QUERY,
-        fetchPolicy: "network-only"
+        fetchPolicy: 'network-only',
       });
 
       return result.data?.shoe_item.map((item) => {
@@ -76,7 +75,9 @@ export class ShoesService {
           size: item.size,
           dateCreated: new Date(item.dateCreated),
           shoe: item.shoe,
-          datePurchased: item.purchase?.purchase_date ? new Date(item.purchase?.purchase_date) : undefined,
+          datePurchased: item.purchase?.purchase_date
+            ? new Date(item.purchase?.purchase_date)
+            : undefined,
         };
 
         return newItem;
@@ -111,10 +112,10 @@ export class ShoesService {
 
     try {
       const result = await this.client.query<{
-        purchases: { purchaseDate: Date, shoe_item: ShoeItem }[] | undefined;
+        purchases: { purchaseDate: Date; shoe_item: ShoeItem }[] | undefined;
       }>({
         query: QUERY,
-        fetchPolicy: "network-only"
+        fetchPolicy: 'network-only',
       });
 
       return result.data?.purchases?.flatMap((p) => {
@@ -125,7 +126,7 @@ export class ShoesService {
           size: item.size,
           dateCreated: new Date(item.dateCreated),
           shoe: item.shoe,
-          datePurchased:p.purchaseDate? new Date(p.purchaseDate) : undefined,
+          datePurchased: p.purchaseDate ? new Date(p.purchaseDate) : undefined,
         };
 
         return newItem;

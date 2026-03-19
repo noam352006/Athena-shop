@@ -1,6 +1,6 @@
 import { ApolloClient, gql } from '@apollo/client';
 import { Injectable } from '@nestjs/common';
-import { PartialUser, UserRole } from 'src/classes/partialUser';
+import { PartialUser, UserRole } from 'src/common/types/partialUser.type';
 
 @Injectable()
 export class UserService {
