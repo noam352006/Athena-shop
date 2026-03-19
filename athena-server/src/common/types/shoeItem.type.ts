@@ -1,5 +1,5 @@
 import { Field, ObjectType } from '@nestjs/graphql';
-import { BasicShoe } from './basicShoe.type';
+import { BasicShoe } from './basic-shoe.type';
 
 @ObjectType()
 export class ShoeItem {

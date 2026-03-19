@@ -1,24 +1,23 @@
 import { Resolver, Query, Mutation, Args } from '@nestjs/graphql';
-import { BasicShoe } from './common/types/basicShoe.type';
+import { BasicShoe } from './common/types/basic-shoe.type';
 import { ShoeItem } from './common/types/shoeItem.type';
 import { PartialUser } from './common/types/partialUser.type';
-import { BasicShoeService } from './common/graphqL/basicShoe.service';
-import { ShoesService } from './common/graphqL/item.service';
-import { UserService } from './common/graphqL/user.service';
+import { Queries } from './common/graphqL/queries';
+import { Mutations } from './common/graphqL/mutation';
+
 
 @Resolver()
 export class AppResolver {
   constructor(
-    private readonly basicShoeService: BasicShoeService,
-    private readonly itemService: ShoesService,
-    private readonly userService: UserService,
+    private readonly queries: Queries,
+    private readonly mutation: Mutations,
   ) {}
 
   //------BASIC SHOES---------------
   @Query(() => [BasicShoe])
   async getAllBasicShoes() {
     try {
-      return await this.basicShoeService.getAllBasicShoes();
+      return await this.queries.getAllBasicShoes();
     } catch (error) {
       console.error('Error fetching basic shoes at getAllBasicShoes()', error);
       throw error;
@@ -29,7 +28,7 @@ export class AppResolver {
   @Query(() => [ShoeItem])
   async getAllShoes() {
     try {
-      return await this.itemService.getAllItems();
+      return await this.queries.getAllItems();
     } catch (error) {
       console.error('Error fetching shoes at getAllShoes()', error);
       throw error;
@@ -39,7 +38,7 @@ export class AppResolver {
   @Query(() => [ShoeItem])
   async getAllPurchases() {
     try {
-      return await this.itemService.getAllPurchases();
+      return await this.queries.getAllPurchases();
     } catch (error) {
       console.error('Error fetching purchases at getAllPurchases()', error);
       throw error;
@@ -52,7 +51,7 @@ export class AppResolver {
     @Args('itemId') shoeId: string,
   ) {
     try {
-      const result = await this.itemService.purchaseItem(userId, shoeId);
+      const result = await this.mutation.purchaseItem(userId, shoeId);
       return result ? new Date(result) : undefined;
     } catch (error) {
       console.error('Error purchasing item at purchaseItem()', error);
@@ -67,9 +66,15 @@ export class AppResolver {
     @Args('userName') userName: string,
   ) {
     try {
-      return await this.userService.getUserByCredentials(userPassword, userName);
+      return await this.queries.getUserByCredentials(
+        userPassword,
+        userName,
+      );
     } catch (error) {
-      console.error('Error fetching user by credentials at getUserByCredentials()', error);
+      console.error(
+        'Error fetching user by credentials at getUserByCredentials()',
+        error,
+      );
       throw error;
     }
   }
@@ -77,7 +82,7 @@ export class AppResolver {
   @Query(() => PartialUser, { nullable: true })
   async getUserByName(@Args('userName') userName: string) {
     try {
-      return await this.userService.getUserByName(userName);
+      return await this.queries.getUserByName(userName);
     } catch (error) {
       console.error('Error fetching user by name at getUserByName()', error);
       throw error;
@@ -87,9 +92,12 @@ export class AppResolver {
   @Query(() => [String])
   async getUserPurchasedBrands(@Args('user_id') userId: string) {
     try {
-      return await this.userService.getUserPurchasedBrands(userId);
+      return await this.queries.getUserPurchasedBrands(userId);
     } catch (error) {
-      console.error('Error fetching purchased brands at getUserPurchasedBrands()', error);
+      console.error(
+        'Error fetching purchased brands at getUserPurchasedBrands()',
+        error,
+      );
       throw error;
     }
   }
@@ -100,7 +108,7 @@ export class AppResolver {
     @Args('userName') userName: string,
   ) {
     try {
-      return await this.userService.signUp(userPassword, userName);
+      return await this.mutation.signUp(userPassword, userName);
     } catch (error) {
       console.error('Error inserting user at signUp()', error);
       throw error;
