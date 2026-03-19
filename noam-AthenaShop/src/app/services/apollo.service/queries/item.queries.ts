@@ -13,10 +13,10 @@ export class ItemQueries {
   
     getAllItems(): Observable<ShoeItem[]> {
       return this.apollo
-        .query<{ getAllShoes: ShoeItem[] }>({
+        .query<{ getAllShoeItems: ShoeItem[] }>({
           query: gql`
             query {
-              getAllShoes {
+              getAllShoeItems {
                 id
                 size
                 dateCreated
@@ -34,7 +34,7 @@ export class ItemQueries {
           `,
           fetchPolicy: 'network-only',
         })
-        .pipe(map((result) => result.data.getAllShoes));
+        .pipe(map((result) => result.data.getAllShoeItems));
     }
   
     ///replaced by subscribeToPurchases 

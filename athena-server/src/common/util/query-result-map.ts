@@ -16,7 +16,7 @@ export function mapPurchase(item: any, purchaseDate: Date): ShoeItem {
     size: item.size,
     dateCreated: new Date(item.dateCreated),
     shoe: item.shoe,
-    datePurchased: purchaseDate ? new Date(purchaseDate) : undefined,
+    datePurchased: purchaseDate ? new Date(purchaseDate) : null,
   };
 }
 
@@ -28,6 +28,6 @@ export function mapItem(item: any): ShoeItem {
     shoe: item.shoe,
     datePurchased: item.purchase?.purchase_date
       ? new Date(item.purchase?.purchase_date)
-      : undefined,
+      : null,
   };
 }

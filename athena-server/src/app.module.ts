@@ -3,10 +3,11 @@ import { GraphQLModule } from '@nestjs/graphql';
 import { ApolloDriver, ApolloDriverConfig } from '@nestjs/apollo';
 import { AppService } from './app.service';
 import { AppResolver } from './app.resolver';
+import { BasicShoeService } from './common/graphqL/basic-shoe.service';
+import { ShoesService } from './common/graphqL/item.service';
+import { UserService } from './common/graphqL/user.service';
 import { ApolloClientProvider } from './apollo.provider';
 import { ConfigModule } from '@nestjs/config';
-import { Queries } from './common/graphqL/queries';
-import { Mutations } from './common/graphqL/mutation';
 
 @Module({
   imports: [
@@ -22,8 +23,9 @@ import { Mutations } from './common/graphqL/mutation';
     AppService,
     AppResolver,
     ApolloClientProvider,
-    Queries,
-    Mutations
+    BasicShoeService,
+    ShoesService,
+    UserService,
   ],
 })
 export class AppModule {}

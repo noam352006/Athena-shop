@@ -2,22 +2,23 @@ import { Resolver, Query, Mutation, Args } from '@nestjs/graphql';
 import { BasicShoe } from './common/types/basic-shoe.type';
 import { ShoeItem } from './common/types/shoeItem.type';
 import { PartialUser } from './common/types/partialUser.type';
-import { Queries } from './common/graphqL/queries';
-import { Mutations } from './common/graphqL/mutation';
-
+import { BasicShoeService } from './common/graphqL/basic-shoe.service';
+import { ShoesService } from './common/graphqL/item.service';
+import { UserService } from './common/graphqL/user.service';
 
 @Resolver()
 export class AppResolver {
   constructor(
-    private readonly queries: Queries,
-    private readonly mutation: Mutations,
+    private readonly basicShoeService: BasicShoeService,
+    private readonly itemService: ShoesService,
+    private readonly userService: UserService,
   ) {}
 
   //------BASIC SHOES---------------
   @Query(() => [BasicShoe])
   async getAllBasicShoes() {
     try {
-      return await this.queries.getAllBasicShoes();
+      return await this.basicShoeService.getAllBasicShoes();
     } catch (error) {
       console.error('Error fetching basic shoes at getAllBasicShoes()', error);
       throw error;
@@ -26,9 +27,9 @@ export class AppResolver {
 
   //------------SHOE ITEMS-----------
   @Query(() => [ShoeItem])
-  async getAllShoes() {
+  async getAllShoeItems() {
     try {
-      return await this.queries.getAllItems();
+      return await this.itemService.getAllShoeItems();
     } catch (error) {
       console.error('Error fetching shoes at getAllShoes()', error);
       throw error;
@@ -38,7 +39,7 @@ export class AppResolver {
   @Query(() => [ShoeItem])
   async getAllPurchases() {
     try {
-      return await this.queries.getAllPurchases();
+      return await this.itemService.getAllPurchases();
     } catch (error) {
       console.error('Error fetching purchases at getAllPurchases()', error);
       throw error;
@@ -51,7 +52,7 @@ export class AppResolver {
     @Args('itemId') shoeId: string,
   ) {
     try {
-      const result = await this.mutation.purchaseItem(userId, shoeId);
+      const result = await this.itemService.purchaseItem(userId, shoeId);
       return result ? new Date(result) : undefined;
     } catch (error) {
       console.error('Error purchasing item at purchaseItem()', error);
@@ -66,7 +67,7 @@ export class AppResolver {
     @Args('userName') userName: string,
   ) {
     try {
-      return await this.queries.getUserByCredentials(
+      return await this.userService.getUserByCredentials(
         userPassword,
         userName,
       );
@@ -82,7 +83,7 @@ export class AppResolver {
   @Query(() => PartialUser, { nullable: true })
   async getUserByName(@Args('userName') userName: string) {
     try {
-      return await this.queries.getUserByName(userName);
+      return await this.userService.getUserByName(userName);
     } catch (error) {
       console.error('Error fetching user by name at getUserByName()', error);
       throw error;
@@ -92,7 +93,7 @@ export class AppResolver {
   @Query(() => [String])
   async getUserPurchasedBrands(@Args('user_id') userId: string) {
     try {
-      return await this.queries.getUserPurchasedBrands(userId);
+      return await this.userService.getUserPurchasedBrands(userId);
     } catch (error) {
       console.error(
         'Error fetching purchased brands at getUserPurchasedBrands()',
@@ -108,7 +109,7 @@ export class AppResolver {
     @Args('userName') userName: string,
   ) {
     try {
-      return await this.mutation.signUp(userPassword, userName);
+      return await this.userService.signUp(userPassword, userName);
     } catch (error) {
       console.error('Error inserting user at signUp()', error);
       throw error;

@@ -6,6 +6,6 @@ export class ShoeItem {
   @Field() id: string;
   @Field() shoe: BasicShoe;
   @Field() dateCreated: Date;
-  @Field(() => Date, { nullable: true }) datePurchased?: Date;
+  @Field(() => Date, { nullable: true }) datePurchased?: Date | null;
   @Field() size: number;
 }
