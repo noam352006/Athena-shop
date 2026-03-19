@@ -16,11 +16,7 @@ export class LoginService {
   ) {}
 
   async doesNameExists(name: string): Promise<boolean> {
-    const searchesUserName = await firstValueFrom(
-      this.userQueries.getUserByName(name),
-    );
-
-    return searchesUserName ? true : false;
+    return (await this.userQueries.getUserByName(name)) ? true : false;
   }
 
   // get user from db with password and user name
@@ -29,9 +25,7 @@ export class LoginService {
     userName: string,
   ): Promise<partialUser | null> {
     try {
-      const user$ = this.userQueries.getUserBycredentials(password, userName); // Observable<User>
-      const user = await firstValueFrom(user$);
-      return user;
+      return await this.userQueries.getUserByCredentials(password, userName);
     } catch (err) {
       console.error(err);
       return null;
@@ -48,9 +42,7 @@ export class LoginService {
   }
 
   async signUp(password: string, userName: string): Promise<void> {
-    const newUser = await firstValueFrom(
-      this.userQueries.insertUser(password, userName),
-    );
+    const newUser = await this.userQueries.insertUser(password, userName);
     if (!newUser) {
       console.error('somthing went wrong');
     } else {

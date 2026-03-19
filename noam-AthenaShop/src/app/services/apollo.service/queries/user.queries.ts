@@ -1,9 +1,14 @@
 import { Injectable } from '@angular/core';
-import { Apollo, gql } from 'apollo-angular';
-import { map, Observable, of } from 'rxjs';
+import { Apollo } from 'apollo-angular';
+import { map, Observable } from 'rxjs';
 import { partialUser } from 'src/app/shared/intrefaces/partialUser';
 import { signUserUpMutation } from '../mutations';
-import { getUserByCredentialsQuery, getUserByNameQuery, getUserPurchasedBrandsQuery } from '../queries';
+import {
+  getUserByCredentialsQuery,
+  getUserByNameQuery,
+  getUserPurchasedBrandsQuery,
+} from '../queries';
+import { firstValueFrom } from 'rxjs';
 
 @Injectable({
   providedIn: 'root',
@@ -11,48 +16,59 @@ import { getUserByCredentialsQuery, getUserByNameQuery, getUserPurchasedBrandsQu
 export class UserQueries {
   constructor(private readonly apollo: Apollo) {}
 
-  //-------------------------QUERIES-----------------------
-  getUserBycredentials(
+  //-------------------------QUERIES----------------------
+  async getUserByCredentials(
     userPassword: string,
     userName: string,
-  ): Observable<partialUser | null> {
-    return this.apollo
-      .watchQuery<{ getUserByCredentials: partialUser | null }>({
+  ): Promise<partialUser | null> {
+    const { data } = await firstValueFrom(
+      this.apollo.query<{ getUserByCredentials: partialUser | null }>({
         query: getUserByCredentialsQuery,
         variables: { userPassword, userName },
         fetchPolicy: 'network-only',
-      })
-      .valueChanges.pipe(map((result) => result.data.getUserByCredentials));
+      }),
+    );
+
+    return data.getUserByCredentials;
   }
 
-  getUserByName(userName: string): Observable<partialUser | null> {
-    return this.apollo
-      .watchQuery<{ getUserByName: partialUser | null }>({
+  async getUserByName(userName: string): Promise<partialUser | null> {
+    const { data } = await firstValueFrom(
+      this.apollo.query<{ getUserByName: partialUser | null }>({
         query: getUserByNameQuery,
         variables: { userName },
         fetchPolicy: 'network-only',
-      })
-      .valueChanges.pipe(map((result) => result.data.getUserByName));
+      }),
+    );
+
+    return data.getUserByName;
   }
 
-  getUserPurchasedBrands(userId: string): Observable<string[]> {
-    if (!userId) return of([]);
-    return this.apollo
-      .watchQuery<{ getUserPurchasedBrands: string[] }>({
+  async getUserPurchasedBrands(userId: string): Promise<string[]> {
+    if (!userId) return [];
+
+    const { data } = await firstValueFrom(
+      this.apollo.query<{ getUserPurchasedBrands: string[] }>({
         query: getUserPurchasedBrandsQuery,
         variables: { userId },
         fetchPolicy: 'network-only',
-      })
-      .valueChanges.pipe(map((result) => result.data.getUserPurchasedBrands));
+      }),
+    );
+
+    return data.getUserPurchasedBrands;
   }
 
   //-------------MUTATION-----------------------
-  insertUser(userPassword: string, userName: string): Observable<partialUser> {
-    return this.apollo
-      .mutate<{ signUserUp: partialUser }>({
+  async insertUser(
+    userPassword: string,
+    userName: string,
+  ): Promise<partialUser | undefined> {
+    const { data } = await firstValueFrom(
+      this.apollo.mutate<{ signUserUp: partialUser }>({
         mutation: signUserUpMutation,
         variables: { userPassword, userName },
-      })
-      .pipe(map((result) => result.data!.signUserUp));
+      }),
+    );
+    return data?.signUserUp;
   }
 }

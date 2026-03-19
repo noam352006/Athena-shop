@@ -59,7 +59,7 @@ export const getAllPurchasesQuery = gql`
 
 //-----------------------USERS----------------------
 export const getUserByCredentialsQuery = gql`
-  query getUserByLogin($password: String!, $user_name: String!) {
+  query getUserByCredential($password: String!, $user_name: String!) {
     users_by_pk(password: $password, user_name: $user_name) {
       id
       user_name

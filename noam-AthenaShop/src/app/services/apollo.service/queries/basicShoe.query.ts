@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
-import { Apollo, gql } from 'apollo-angular';
-import { map, Observable, of } from 'rxjs';
+import { Apollo } from 'apollo-angular';
+import { firstValueFrom } from 'rxjs';
 import { BasicShoe } from 'src/app/shared/intrefaces/basicShoe';
 import { getAllBasicShoesQuery } from '../queries';
 
@@ -11,11 +11,12 @@ export class BasicShoeQueries {
   constructor(private readonly apollo: Apollo) {}
 
   // ---------------- BASIC SHOES ----------------
-  getAllBasicShoes(): Observable<BasicShoe[]> {
-    return this.apollo
-      .watchQuery<{ getAllBasicShoes: BasicShoe[] }>({
+  async getAllBasicShoes(): Promise<BasicShoe[]> {
+    const { data } = await firstValueFrom(
+      this.apollo.query<{ getAllBasicShoes: BasicShoe[] }>({
         query: getAllBasicShoesQuery,
-      })
-      .valueChanges.pipe(map((result) => result.data.getAllBasicShoes));
+      }),
+    );
+    return data.getAllBasicShoes;
   }
 }

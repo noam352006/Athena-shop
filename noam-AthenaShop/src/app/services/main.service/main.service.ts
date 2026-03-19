@@ -84,12 +84,12 @@ export class MainService {
     }
   }
 
-  purchaseItem(shoeId: string): void {
+  async didPurchaseItem(shoeId: string): Promise<boolean> {
     const userId = this.authQuery.getCurrUser?.id;
     if (userId) {
-      this.itemQueries.insertPurchase(userId, shoeId).subscribe(async (date) => {
-        console.log(date);
-      });
+      return await this.itemQueries.insertPurchase(userId, shoeId)? true : false;
+    } else {
+      return false;
     }
   }
 

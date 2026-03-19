@@ -91,10 +91,8 @@ export class ShoeItemQuery extends QueryEntity<ShoeItemState> {
       : shoeList;
   }
 
-  getBasicShoeById(id: string): Observable<BasicShoe | undefined> {
-    return this.basicShoeQueries
-      .getAllBasicShoes()
-      .pipe(map((shoes) => shoes.find((shoe) => shoe.id === id)));
+  async getBasicShoeById(id: string): Promise<BasicShoe | undefined>{
+    return (await this.basicShoeQueries.getAllBasicShoes()).find(shoe => shoe.id === id);
   }
 
   selectItemsByBasicShoe(id: string): ShoeItem[] {

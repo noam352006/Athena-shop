@@ -49,8 +49,8 @@ export class ShoeCardComponent {
     }, 2000);
   }
 
-  purchaseItem(): void {
-    this.mainService.purchaseItem(this.currShoe.id);
+  async purchaseItem(): Promise<void> {
+    await this.mainService.didPurchaseItem(this.currShoe.id);
     this.openDialog();
     this.buttonState = 'disabled';
   }

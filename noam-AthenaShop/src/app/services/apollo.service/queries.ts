@@ -39,7 +39,7 @@ export const getAllShoeItemsQuery = gql`
 //-----------------users---------------
 export const getUserByCredentialsQuery = gql`
   query ($userPassword: String!, $userName: String!) {
-    getUserByCredentials(userPassword: $userPassword, userName: $userNam) {
+    getUserByCredentials(userPassword: $userPassword, userName: $userName) {
       id
       userName
       role

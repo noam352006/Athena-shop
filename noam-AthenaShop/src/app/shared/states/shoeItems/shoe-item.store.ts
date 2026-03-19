@@ -28,9 +28,7 @@ export class ShoeItemStore extends EntityStore<ShoeItemState, ShoeItem> {
     this.loadItems();
   }
 
-  loadItems(): void {
-    this.itemQueries.getAllItems().subscribe((items) => {
-      this.add(items);
-    });
+  async loadItems(): Promise<void> {
+    this.add(await this.itemQueries.getAllItems())
   }
 }
