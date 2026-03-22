@@ -4,11 +4,12 @@ import { ShoeItem } from 'src/common/types/shoeItem.type';
 import { purchaseItemMutation } from './mutation';
 import { getAllPurchasesQuery, getAllShoeItemsQuery } from './queries';
 import { mapItem, mapPurchase } from '../util/query-result-map';
-import { RawShoeItem } from '../types/rawTypes';
+import { rawPurchase, RawShoeItem } from '../types/rawTypes';
+import { BasicGraphQLService } from '../util/basicGraphQL.service';
 
 @Injectable()
 export class ShoesService {
-  constructor(private readonly client: ApolloClient) {}
+  constructor(private readonly client: ApolloClient, private readonly graphQLService: BasicGraphQLService) {}
 
   //------MUTATIONS----------------
   async purchaseItem(
@@ -32,23 +33,20 @@ export class ShoesService {
 
   //---------------------------QUERIES------------------
   async getAllShoeItems(): Promise<ShoeItem[] | undefined> {
-    const result = await this.client.query<{ shoeItems: RawShoeItem[] }>({
-      query: getAllShoeItemsQuery,
-    });
+    const returnedFieldName = 'shoeItems'
+    const rawItems =  await this.graphQLService.getEntityArray<RawShoeItem>(getAllShoeItemsQuery, returnedFieldName)?? [];
 
-    const items = result.data?.shoeItems ?? [];
-    return items.map((item) => mapItem(item));
+    return rawItems.map((item) => mapItem(item));
   }
 
   async getAllPurchases(): Promise<ShoeItem[] | undefined> {
-    const result = await this.client.query<{
-      purchases: { purchaseDate: Date; shoeItems: RawShoeItem }[] | undefined;
-    }>({
-      query: getAllPurchasesQuery,
-    });
 
-    return result?.data?.purchases?.flatMap((p) =>
-      mapPurchase(p.shoeItems, p.purchaseDate),
+    const returnedFieldName = 'purchases'
+    const rawPurchases =  await this.graphQLService.getEntityArray<rawPurchase | undefined>
+      (getAllPurchasesQuery, returnedFieldName);
+
+    return rawPurchases?.flatMap((p) =>
+      mapPurchase(p?.shoeItem!, p?.purchaseDate!)
     );
   }
 }

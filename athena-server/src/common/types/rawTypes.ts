@@ -1,5 +1,6 @@
 import { Brands } from './basic-shoe.type';
 import { UserRole } from './partialUser.type';
+import { ShoeItem } from './shoeItem.type';
 
 export type RawShoeItem = {
   id: string;
@@ -23,4 +24,10 @@ export type rawUser = {
   user_name: string;
   role: UserRole;
   date_created: string;
+};
+
+
+export type rawPurchase = {
+  purchaseDate: Date,
+  shoeItem: RawShoeItem
 };

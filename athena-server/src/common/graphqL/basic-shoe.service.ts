@@ -1,19 +1,14 @@
-import { ApolloClient } from '@apollo/client';
 import { Injectable } from '@nestjs/common';
 import { BasicShoe } from '../types/basic-shoe.type';
 import { getAllBasicShoesQuery } from './queries';
+import { BasicGraphQLService } from '../util/basicGraphQL.service';
 
 @Injectable()
 export class BasicShoeService {
-  constructor(private readonly client: ApolloClient) {}
+  constructor(private graphQlService: BasicGraphQLService) {}
 
   async getAllBasicShoes(): Promise<BasicShoe[] | null> {
-    const result = await this.client.query<{
-      basicShoes: BasicShoe[] | undefined;
-    }>({
-      query: getAllBasicShoesQuery,
-    });
-
-    return result.data?.basicShoes?? null;
+    const returnedFieldName = 'basicShoes'
+    return this.graphQlService.getEntityArray<BasicShoe>(getAllBasicShoesQuery, returnedFieldName)
   }
 }

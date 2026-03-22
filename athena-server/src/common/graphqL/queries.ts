@@ -40,7 +40,7 @@ export const getAllPurchasesQuery = gql`
   query getAllPurchases {
     purchases {
       purchaseDate: purchase_date
-      shoeItems: shoe_item {
+      shoeItem: shoe_item {
         id
         size
         dateCreated

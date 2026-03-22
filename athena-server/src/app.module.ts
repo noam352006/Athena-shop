@@ -8,6 +8,7 @@ import { ShoesService } from './common/graphqL/item.service';
 import { UserService } from './common/graphqL/user.service';
 import { ApolloClientProvider } from './apollo.provider';
 import { ConfigModule } from '@nestjs/config';
+import { BasicGraphQLService } from './common/util/basicGraphQL.service';
 
 @Module({
   imports: [
@@ -26,6 +27,7 @@ import { ConfigModule } from '@nestjs/config';
     BasicShoeService,
     ShoesService,
     UserService,
+    BasicGraphQLService
   ],
 })
 export class AppModule {}
