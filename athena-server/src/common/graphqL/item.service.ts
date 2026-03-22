@@ -9,21 +9,24 @@ import { BasicGraphQLService } from '../util/basicGraphQL.service';
 
 @Injectable()
 export class ShoesService {
-  constructor(private readonly client: ApolloClient, private readonly graphQLService: BasicGraphQLService) {}
+  constructor(
+    private readonly client: ApolloClient,
+    private readonly graphQLService: BasicGraphQLService,
+  ) {}
 
   //------MUTATIONS----------------
   async purchaseItem(
     userId: string,
     itemID: string,
   ): Promise<Date | undefined> {
-    const result = await this.client.mutate<{
-      insert_purchases_one: { purchase_date: Date };
-    }>({
-      mutation: purchaseItemMutation,
-      variables: { user_id: userId, shoe_id: itemID },
-    });
+    const returnedFieldName = 'insert_purchases_one';
+    const newPurchase = await this.graphQLService.mutate<rawPurchase>(
+      purchaseItemMutation,
+      returnedFieldName,
+      { user_id: userId, shoe_id: itemID },
+    );
 
-    const purchseDate = result.data?.insert_purchases_one?.purchase_date;
+    const purchseDate = newPurchase?.purchaseDate;
     if (!purchseDate) {
       return undefined;
     }
@@ -33,20 +36,24 @@ export class ShoesService {
 
   //---------------------------QUERIES------------------
   async getAllShoeItems(): Promise<ShoeItem[] | undefined> {
-    const returnedFieldName = 'shoeItems'
-    const rawItems =  await this.graphQLService.getEntityArray<RawShoeItem>(getAllShoeItemsQuery, returnedFieldName)?? [];
+    const returnedFieldName = 'shoeItems';
+    const rawItems =
+      (await this.graphQLService.getEntity<RawShoeItem[]>(
+        getAllShoeItemsQuery,
+        returnedFieldName,
+      )) ?? [];
 
     return rawItems.map((item) => mapItem(item));
   }
 
   async getAllPurchases(): Promise<ShoeItem[] | undefined> {
-
-    const returnedFieldName = 'purchases'
-    const rawPurchases =  await this.graphQLService.getEntityArray<rawPurchase | undefined>
-      (getAllPurchasesQuery, returnedFieldName);
+    const returnedFieldName = 'purchases';
+    const rawPurchases = await this.graphQLService.getEntity<
+      rawPurchase[] | undefined
+    >(getAllPurchasesQuery, returnedFieldName);
 
     return rawPurchases?.flatMap((p) =>
-      mapPurchase(p?.shoeItem!, p?.purchaseDate!)
+      mapPurchase(p?.shoeItem!, p?.purchaseDate!),
     );
   }
 }

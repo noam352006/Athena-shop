@@ -4,7 +4,7 @@ import { gql } from '@apollo/client';
 export const purchaseItemMutation = gql`
   mutation purchaseShoe($user_id: uuid!, $shoe_id: uuid!) {
     insert_purchases_one(object: { user_id: $user_id, item_id: $shoe_id }) {
-      purchase_date
+      purchaseDate: purchase_date
     }
   }
 `;
