@@ -12,7 +12,7 @@ import { ItemQueries } from '../apollo.service/queries/item.queries';
 @Injectable({
   providedIn: 'root',
 })
-export class MainService {
+export class ShopService {
   constructor(
     private shoeQuery: ShoeItemQuery,
     private router: Router,

@@ -17,6 +17,7 @@ export class BasicShoeQueries {
         query: getAllBasicShoesQuery,
       }),
     );
+    
     return data.getAllBasicShoes;
   }
 }

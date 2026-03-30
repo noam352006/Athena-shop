@@ -24,12 +24,15 @@ export class LoginService {
     password: string,
     userName: string,
   ): Promise<partialUser | null> {
+    let result: partialUser | null = null;
+
     try {
-      return await this.userQueries.getUserByCredentials(password, userName);
+      result = await this.userQueries.getUserByCredentials(password, userName);
     } catch (err) {
       console.error(err);
-      return null;
     }
+
+    return result;
   }
 
   //if user exists log them in - initialize state

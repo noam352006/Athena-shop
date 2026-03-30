@@ -16,7 +16,7 @@ export class AuthQuery extends Query<AuthState> {
     return !!this.getValue().connectedUser;
   }
 
-  get getCurrUser(): partialUser | undefined{
+  get getCurrUser(): partialUser | undefined {
     return this.getValue().connectedUser;
   }
 

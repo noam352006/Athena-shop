@@ -1,4 +1,8 @@
-import { ApolloClient, InMemoryCache, createHttpLink, split } from '@apollo/client/core';
+import {
+  ApolloClient,
+  InMemoryCache,
+  split,
+} from '@apollo/client/core';
 import { GraphQLWsLink } from '@apollo/client/link/subscriptions';
 import { createClient } from 'graphql-ws';
 import { getMainDefinition } from '@apollo/client/utilities';
@@ -8,22 +12,21 @@ import { HttpLink } from 'apollo-angular/http';
 import { environment } from 'src/environments/environment';
 
 export const ApolloClientProvider: Provider = {
-provide: APOLLO_OPTIONS,
+  provide: APOLLO_OPTIONS,
   useFactory: (httpLink: HttpLink) => {
-    
     const http = httpLink.create({
       uri: environment.serverUrl,
     });
 
     const ws = new GraphQLWsLink(
       createClient({
-        url: environment.hasuraWsUrl, 
+        url: environment.hasuraWsUrl,
         connectionParams: {
           headers: {
             'x-hasura-admin-secret': environment.hsuraAdminSecret,
           },
         },
-      })
+      }),
     );
 
     const link = split(
@@ -34,8 +37,8 @@ provide: APOLLO_OPTIONS,
           definition.operation === 'subscription'
         );
       },
-      ws,   // לאן הולך ה-subscription
-      http  // לאן הולך כל השאר
+      ws, //subscription
+      http, //כל השאר
     );
 
     return new ApolloClient({
@@ -43,6 +46,5 @@ provide: APOLLO_OPTIONS,
       cache: new InMemoryCache(),
     });
   },
-  deps:[HttpLink],
-  
+  deps: [HttpLink],
 };

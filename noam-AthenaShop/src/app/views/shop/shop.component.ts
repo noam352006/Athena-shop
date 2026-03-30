@@ -1,17 +1,20 @@
 import { Component } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import { BehaviorSubject, combineLatest, map } from 'rxjs';
-import { MainService } from 'src/app/services/main.service/main.service';
+import { ShopService } from 'src/app/services/shop.service/shop.service';
 import { ShoeItem } from 'src/app/shared/intrefaces/shoeItem';
 import { ShoeItemQuery } from 'src/app/shared/states/shoeItems/shoe-item.query';
 
 @Component({
   selector: 'app-shop',
   templateUrl: './shop.component.html',
-  styleUrls: ['./shop.component.less']
+  styleUrls: ['./shop.component.less'],
 })
 export class ShopComponent {
-  constructor(private itemQuery: ShoeItemQuery, private mainService: MainService, private dialog: MatDialog) { }
+  constructor(
+    private itemQuery: ShoeItemQuery,
+    private shopService: ShopService,
+  ) {}
   minCardsCount: number = 9;
   steps: number = 6;
   items$ = this.itemQuery.filteredShoes$;
@@ -30,11 +33,12 @@ export class ShopComponent {
       } else {
         return copy.sort((a, b) => b.shoe.rating - a.shoe.rating);
       }
-    })
+    }),
   );
 
   displayedCards$ = combineLatest([this.sorted$, this.visibleCards$]).pipe(
-    map(([items, count]) => items.slice(0, count)));
+    map(([items, count]) => items.slice(0, count)),
+  );
 
   viewMore(): void {
     this.visibleCards$.next(this.visibleCards$.value + this.steps);
@@ -45,11 +49,10 @@ export class ShopComponent {
   }
 
   close(filterName: string): void {
-    this.mainService.close(filterName);
+    this.shopService.close(filterName);
   }
 
-  trackById(i: number, item: ShoeItem) :string {
-    return item.id
+  trackById(i: number, item: ShoeItem): string {
+    return item.id;
   }
-
 }

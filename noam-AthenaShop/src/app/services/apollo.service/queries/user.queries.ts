@@ -45,8 +45,6 @@ export class UserQueries {
   }
 
   async getUserPurchasedBrands(userId: string): Promise<string[]> {
-    if (!userId) return [];
-
     const { data } = await firstValueFrom(
       this.apollo.query<{ getUserPurchasedBrands: string[] }>({
         query: getUserPurchasedBrandsQuery,
@@ -55,10 +53,10 @@ export class UserQueries {
       }),
     );
 
-    return data.getUserPurchasedBrands;
+    return data.getUserPurchasedBrands ?? [];
   }
 
-  //-------------MUTATION-----------------------
+  //-------------MUTATIONS-----------------------
   async insertUser(
     userPassword: string,
     userName: string,
@@ -69,6 +67,7 @@ export class UserQueries {
         variables: { userPassword, userName },
       }),
     );
+    
     return data?.signUserUp;
   }
 }

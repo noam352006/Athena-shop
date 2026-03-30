@@ -2,7 +2,7 @@ import { Injectable } from '@angular/core';
 import { Apollo, gql } from 'apollo-angular';
 import { firstValueFrom, map, Observable, of } from 'rxjs';
 import { ShoeItem } from 'src/app/shared/intrefaces/shoeItem';
-import { subscribeToPurchases } from '../subscribes';
+import { subscribeToPurchases } from '../subscribtions';
 import { getAllShoeItemsQuery } from '../queries';
 import { inserPurchaseMutation } from '../mutations';
 
@@ -18,13 +18,13 @@ export class ItemQueries {
     const { data } = await firstValueFrom(
       this.apollo.query<{ getAllShoeItems: ShoeItem[] }>({
         query: getAllShoeItemsQuery,
-        fetchPolicy: 'network-only',
       }),
     );
+
     return data.getAllShoeItems;
   }
 
-  //---------------------SUBSCRIPTION----------------------------
+  //---------------------SUBSCRIPTIONS----------------------------
 
   subscribeToPurhases(): Observable<ShoeItem[] | undefined> {
     return this.apollo
@@ -67,6 +67,7 @@ export class ItemQueries {
         variables: { userId, itemId },
       }),
     );
+
     return data?.purchaseItem;
   }
 }

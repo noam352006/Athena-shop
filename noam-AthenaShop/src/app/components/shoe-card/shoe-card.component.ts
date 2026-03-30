@@ -1,7 +1,7 @@
 import { Component, Input, SimpleChanges } from '@angular/core';
 import { ShoeItem } from 'src/app/shared/intrefaces/shoeItem';
 import { PopUpComponent } from '../pop-up/pop-up.component';
-import { MainService } from 'src/app/services/main.service/main.service';
+import { ShopService } from 'src/app/services/shop.service/shop.service';
 import { MatDialog } from '@angular/material/dialog';
 import { BehaviorSubject, tap } from 'rxjs';
 
@@ -15,18 +15,18 @@ export class ShoeCardComponent {
   @Input() isInMainPage?: boolean;
 
   constructor(
-    private mainService: MainService,
+    private shopService: ShopService,
     private dialog: MatDialog,
   ) {}
 
   ngOnChanges(changes: SimpleChanges): void {
     if (changes['currShoe'] && this.currShoe) {
-      const result = this.mainService.getShoeSizes(this.currShoe.shoe.id);
+      const result = this.shopService.getShoeSizes(this.currShoe.shoe.id);
       this.sizes = result;
-      this.mainService
+      this.shopService
         .isItemSoldOut(this.currShoe.id)
         .subscribe((isSoldOut) => {
-          this.isPurchased$.next(isSoldOut ? true : false);
+          this.isPurchased$.next(!!isSoldOut);
         });
     }
   }
@@ -50,7 +50,7 @@ export class ShoeCardComponent {
   }
 
   async purchaseItem(): Promise<void> {
-    await this.mainService.didPurchaseItem(this.currShoe.id);
+    await this.shopService.didPurchaseItem(this.currShoe.id);
     this.openDialog();
     this.buttonState = 'disabled';
   }

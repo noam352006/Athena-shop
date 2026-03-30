@@ -46,7 +46,7 @@ export class UserService {
         getUserByCredentialsQuery,
         returnedFieldName,
         { password: userPassword, user_name: userName },
-      )) ?? undefined;
+      )) ?? null;
 
     console.log(
       `user service: fetching user with userName: ${userName} and password`,

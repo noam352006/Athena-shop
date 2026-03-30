@@ -36,15 +36,15 @@ export class ShoeItemQuery extends QueryEntity<ShoeItemState> {
     }),
   );
 
-  applyAllFilters(shoes: ShoeItem[], f: FilterState): ShoeItem[] {
+  applyAllFilters(shoes: ShoeItem[], filters: FilterState): ShoeItem[] {
     return shoes.filter((currShoe) => {
-      if (f.size !== undefined && currShoe.size !== f.size) {
+      if (filters.size && currShoe.size !== filters.size) {
         return false;
       }
 
       if (
-        currShoe.shoe.price < f.minPrice ||
-        currShoe.shoe.price > f.maxPrice
+        currShoe.shoe.price < filters.minPrice ||
+        currShoe.shoe.price > filters.maxPrice
       ) {
         return false;
       }
@@ -64,9 +64,10 @@ export class ShoeItemQuery extends QueryEntity<ShoeItemState> {
             new Date(b.dateCreated).getTime() -
             new Date(a.dateCreated).getTime(),
         );
+
         return { ...sorted[0] }; // מחזירים את הכי חדשה
       }),
-    )?? undefined;
+    ) ?? undefined;
   }
 
   getAllShoeItems(): ShoeItem[]{
@@ -76,8 +77,9 @@ export class ShoeItemQuery extends QueryEntity<ShoeItemState> {
   getBestSeller(): Observable<string> {
     return this.itemQueries.subscribeToPurhases().pipe(
       map((purchases) => {
-        const counts = countBy(purchases, (p) => p.shoe.id);
+        const counts = countBy(purchases, (purchase) => purchase.shoe.id);
         const best = maxBy(Object.entries(counts), ([, c]) => c);
+
         return best?.[0] ?? this.getAll()[0].id;
       }),
     );
