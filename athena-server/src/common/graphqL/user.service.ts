@@ -1,7 +1,7 @@
 import { ApolloClient, gql } from '@apollo/client';
 import { Injectable } from '@nestjs/common';
 import { PartialUser } from 'src/common/types/partialUser.type';
-import { mapUser } from '../util/query-result-map';
+import { mapUser } from '../util/query-result.mapper';
 import { signUpMutation } from './mutation';
 import {
   getUserByCredentialsQuery,
@@ -19,34 +19,38 @@ export class UserService {
     private graphQLService: BasicGraphQLService,
   ) {}
 
-  //-------------MUTATIONS--------
   async signUp(
     password: string,
     userName: string,
   ): Promise<PartialUser | undefined> {
-    const user = await this.graphQLService.mutate<rawUser>(
+    const user = await this.graphQLService.mutateEntity<rawUser>(
       signUpMutation,
       'insert_users_one',
-      { password: password, user_name: userName }
-    )
+      { password: password, user_name: userName },
+    );
+
+    console.log(`user service: insert with userName: ${userName} and password`);
 
     if (user) {
       return mapUser(user);
     }
   }
 
-  //-----------QUERIES----------
   async getUserByCredentials(
     userPassword: string,
     userName: string,
   ): Promise<PartialUser | null> {
     const returnedFieldName = 'users_by_pk';
     const user =
-      (await this.graphQLService.getEntity<rawUser>(
+      (await this.graphQLService.queryEntity<rawUser>(
         getUserByCredentialsQuery,
         returnedFieldName,
         { password: userPassword, user_name: userName },
       )) ?? undefined;
+
+    console.log(
+      `user service: fetching user with userName: ${userName} and password`,
+    );
 
     return user ? mapUser(user) : null;
   }
@@ -54,29 +58,35 @@ export class UserService {
   async getUserByName(userName: string): Promise<PartialUser | null> {
     const returnedFieldName = 'users';
     const users =
-      (await this.graphQLService.getEntity<rawUser[]>(
+      (await this.graphQLService.queryEntity<rawUser[]>(
         getUserByNameQuery,
         returnedFieldName,
         { user_name: userName },
       )) ?? [];
 
-    const user = users[0];
+    console.log(`fetching user service: user with userName:  ${userName}`);
 
-    return user ? mapUser(user) : null;
+    return users[0] ? mapUser(users[0]) : null;
   }
 
   async getUserPurchasedBrands(userId: string): Promise<string[] | undefined> {
-    if (!userId) return [];
+    if (userId) {
+      const result = await this.client.query<{
+        purchases: { shoeItem: { basicShoe: { brand: Brands[] } } }[];
+      }>({
+        query: getUserPurchasedBrandsQuery,
+        variables: { id: userId },
+      });
 
-    const result = await this.client.query<{
-      purchases: { shoeItem: { basicShoe: { brand: Brands[] } } }[];
-    }>({
-      query: getUserPurchasedBrandsQuery,
-      variables: { id: userId },
-    });
+      console.log(
+        `user service: fetching all purchased brand for userId ${userId}`,
+      );
 
-    return result.data?.purchases?.flatMap(
-      (purchase) => purchase.shoeItem.basicShoe?.brand,
-    );
+      return (
+        result.data?.purchases?.flatMap(
+          (purchase) => purchase.shoeItem.basicShoe?.brand,
+        ) ?? []
+      );
+    }
   }
 }

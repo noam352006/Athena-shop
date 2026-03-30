@@ -43,9 +43,7 @@ export class LoginService {
 
   async signUp(password: string, userName: string): Promise<void> {
     const newUser = await this.userQueries.insertUser(password, userName);
-    if (!newUser) {
-      console.error('somthing went wrong');
-    } else {
+    if (newUser) {
       this.connectUser(newUser);
     }
   }

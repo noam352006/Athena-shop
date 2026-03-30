@@ -98,6 +98,6 @@ export class MainService {
   }
 
   isItemSoldOut(id: string): Observable<ShoeItem | undefined> {
-    return this.shoeQuery.isItemSoldOut(id);
+    return this.shoeQuery.checkItemAvailability(id);
   }
 }

@@ -6,7 +6,7 @@ import { Injectable } from "@nestjs/common";
 export class BasicGraphQLService {
   constructor(private readonly client: ApolloClient) {}
 
-  async getEntity<T>( myQuery: DocumentNode, fieldName: string, vars?: NoInfer<OperationVariables>): Promise<T | null> {
+  async queryEntity<T>( myQuery: DocumentNode, fieldName: string, vars?: NoInfer<OperationVariables>): Promise<T | null> {
     const result = await this.client.query<Record<string, T>>({
       query: myQuery,
       variables: vars,
@@ -15,7 +15,7 @@ export class BasicGraphQLService {
     return result.data?.[fieldName] ?? null;
   }
 
-  async mutate<T>( myMutation: DocumentNode, fieldName: string, vars: NoInfer<OperationVariables>): Promise<T | null> {
+  async mutateEntity<T>( myMutation: DocumentNode, fieldName: string, vars: NoInfer<OperationVariables>): Promise<T | null> {
     const result = await this.client.mutate<Record<string, T>>({
       mutation: myMutation,
       variables: vars,

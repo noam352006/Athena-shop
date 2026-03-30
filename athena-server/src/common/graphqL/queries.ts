@@ -1,6 +1,5 @@
 import { gql } from '@apollo/client';
 
-//----------------BASIC SHOES-----------------------
 export const getAllBasicShoesQuery = gql`
   query getAllBasicShoes {
     basicShoes: basic_shoe {
@@ -14,7 +13,6 @@ export const getAllBasicShoesQuery = gql`
   }
 `;
 
-//------------------SHOE ITEMS---------------------
 export const getAllShoeItemsQuery = gql`
   query getAllShoeItems {
     shoeItems: shoe_item {

@@ -9,6 +9,8 @@ export class BasicShoeService {
 
   async getAllBasicShoes(): Promise<BasicShoe[] | null> {
     const returnedFieldName = 'basicShoes'
-    return this.graphQlService.getEntity<BasicShoe[]>(getAllBasicShoesQuery, returnedFieldName)
+    console.log("Basic shoe service: fetching all basic shoes")
+
+    return this.graphQlService.queryEntity<BasicShoe[]>(getAllBasicShoesQuery, returnedFieldName)
   }
 }

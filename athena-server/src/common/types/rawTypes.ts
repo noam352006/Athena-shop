@@ -26,7 +26,6 @@ export type rawUser = {
   date_created: string;
 };
 
-
 export type rawPurchase = {
   purchaseDate: Date,
   shoeItem: RawShoeItem

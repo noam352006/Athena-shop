@@ -99,11 +99,11 @@ export class ShoeItemQuery extends QueryEntity<ShoeItemState> {
     return this.getAll().filter((item) => item.shoe.id === id);
   }
 
-  getShoeSizes(shoId: string): number[] {
-    return this.selectItemsByBasicShoe(shoId).map((s) => s.size);
+  getShoeSizes(shoeId: string): number[] {
+    return this.selectItemsByBasicShoe(shoeId).map((shoe) => shoe.size);
   }
 
-  isItemSoldOut(id: string): Observable<ShoeItem | undefined> {
+  checkItemAvailability(id: string): Observable<ShoeItem | undefined> {
     return this.itemQueries
       .subscribeToPurhases()
       .pipe(map((shoes) => shoes?.find((shoe) => shoe.id === id)));

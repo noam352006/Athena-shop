@@ -8,7 +8,6 @@ export const ApolloClientProvider: Provider = {
   inject: [ConfigService],
   useFactory: (configService: ConfigService) => {
 
-    console.log(configService.get<string>('HASURA_ADMIN_SECRET')!)
     return new ApolloClient({
       link: new HttpLink({
         uri:  configService.get<string>('HASURA_URL')!, 

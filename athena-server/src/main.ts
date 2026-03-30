@@ -9,12 +9,12 @@ async function bootstrap() {
   
   app.enableCors({
     origin: ['http://localhost:4200', `http://${configService.get('IP')}:4200`],
-    methods: 'GET,HEAD,PUT,PATCH,POST,DELETE',
+    methods: 'GET, HEAD, PUT, PATCH, POST, DELETE',
     credentials: true,
   });
 
   await app.listen(port);
-  console.log(`🚀 Application is running on: http://localhost:${port}/graphql`);
+  console.log(`🚀 Application is running on: http://localhost:${port}`);
 }
 
 bootstrap();

@@ -9,7 +9,7 @@ import { BasicShoe } from 'src/app/shared/intrefaces/basicShoe';
   templateUrl: './main-page.component.html',
   styleUrls: ['./main-page.component.less']
 })
-export class MainPageComponent implements OnInit{
+export class MainPageComponent implements OnInit {
 
   constructor(private service: MainService) { 
   }
@@ -30,5 +30,4 @@ We believe every step tells a tale.Founded by passionate footwear enthusiasts, o
     this.bestSeller = await this.service.getBestSeller()
     this.newestShoe = await this.service.getNewestShoe();
     }
-
  }
