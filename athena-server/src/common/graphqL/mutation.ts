@@ -9,10 +9,10 @@ export const purchaseItemMutation = gql`
 `;
 
 export const signUpMutation = gql`
-  mutation ($password: String!, $user_name: String!) {
+  mutation signUp($password: String!, $user_name: String!) {
     insert_users_one(object: { password: $password, user_name: $user_name }) {
       id
-      user_name
+      userName:user_name
       role
       dateCreated: date_created
     }

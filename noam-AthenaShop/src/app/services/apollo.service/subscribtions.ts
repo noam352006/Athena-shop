@@ -4,7 +4,7 @@ export const subscribeToPurchases = gql`
   subscription subscribeToPurchases {
     purchases {
       purchase_date
-      shoe_item {
+      shoeItem: shoe_item {
         id
         size
         dateCreated

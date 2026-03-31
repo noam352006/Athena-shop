@@ -29,14 +29,14 @@ export class ItemQueries {
   subscribeToPurhases(): Observable<ShoeItem[] | undefined> {
     return this.apollo
       .subscribe<{
-        purchases: { purchaseDate: Date; shoe_item: ShoeItem }[] | undefined;
+        purchases: { purchaseDate: Date; shoeItem: ShoeItem }[] | undefined;
       }>({
         query: subscribeToPurchases,
       })
       .pipe(
         map((result) =>
           result.data!.purchases?.flatMap((p) => {
-            const item = p.shoe_item;
+            const item = p.shoeItem;
 
             const newItem: ShoeItem = {
               id: item.id,
