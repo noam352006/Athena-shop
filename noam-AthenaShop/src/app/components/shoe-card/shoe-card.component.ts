@@ -1,15 +1,9 @@
-import {
-  Component,
-  EventEmitter,
-  Input,
-  Output,
-  SimpleChanges,
-} from '@angular/core';
+import { Component, Input, SimpleChanges } from '@angular/core';
 import { ShoeItem } from 'src/app/shared/intrefaces/shoeItem';
 import { PopUpComponent } from '../pop-up/pop-up.component';
-import { MainService } from 'src/app/services/main.service/main.service';
+import { ShopService } from 'src/app/services/shop.service/shop.service';
 import { MatDialog } from '@angular/material/dialog';
-import { Observable } from 'rxjs';
+import { BehaviorSubject, tap } from 'rxjs';
 
 @Component({
   selector: 'app-shoe-card',
@@ -19,26 +13,25 @@ import { Observable } from 'rxjs';
 export class ShoeCardComponent {
   @Input() currShoe!: ShoeItem;
   @Input() isInMainPage?: boolean;
-  @Output() clickedPurchase = new EventEmitter<void>();
 
   constructor(
-    private mainService: MainService,
+    private shopService: ShopService,
     private dialog: MatDialog,
   ) {}
 
   ngOnChanges(changes: SimpleChanges): void {
     if (changes['currShoe'] && this.currShoe) {
-      const result = this.mainService.getShoeSizes(this.currShoe.shoe.id);
-
-      // אם getShoeSizes מחזיר Observable → נרשם אליו
-      if (result instanceof Observable) {
-        result.subscribe((s) => (this.sizes = s));
-      } else {
-        // אחרת מניחים שמדובר במערך סינכרוני
-        this.sizes = result;
-      }
+      const result = this.shopService.getShoeSizes(this.currShoe.shoe.id);
+      this.sizes = result;
+      this.shopService
+        .isItemSoldOut(this.currShoe.id)
+        .subscribe((isSoldOut) => {
+          this.isPurchased$.next(!!isSoldOut);
+        });
     }
   }
+
+  isPurchased$ = new BehaviorSubject<boolean>(false);
 
   buttonState!: string;
   stars = [1, 2, 3, 4, 5];
@@ -56,16 +49,16 @@ export class ShoeCardComponent {
     }, 2000);
   }
 
-  purchaseItem(): void {
-    const isShoeAvailable = this.mainService.purchaseItem(this.currShoe);
-    this.openDialog(isShoeAvailable);
-    this.buttonState = isShoeAvailable ? 'purchased' : 'disabled';
+  async purchaseItem(): Promise<void> {
+    await this.shopService.didPurchaseItem(this.currShoe.id);
+    this.openDialog();
+    this.buttonState = 'disabled';
   }
 
-  openDialog(canPurchase: Boolean) {
+  openDialog(): void {
     const dialogRef = this.dialog.open(PopUpComponent, {
       width: '30em',
-      data: { success: canPurchase },
+      data: { success: true },
     });
   }
 }

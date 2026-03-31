@@ -12,24 +12,27 @@
   "dependencies": {
     "@angular-slider/ngx-slider": "^14.0.0",
     "@angular/animations": "^14.2.0",
-    "@angular/cdk": "^13.0.0",
+    "@angular/cdk": "^14.2.7",
     "@angular/common": "^14.2.0",
     "@angular/compiler": "^14.2.0",
     "@angular/core": "^14.2.0",
     "@angular/forms": "^14.2.0",
-    "@angular/material": "^13.0.0",
+    "@angular/material": "^14.2.7",
     "@angular/platform-browser": "^14.2.0",
     "@angular/platform-browser-dynamic": "^14.2.0",
     "@angular/router": "^14.2.0",
-    "@datorama/akita": "^7.1.1",
-    "apollo-angular": "^4.0.0",
+    "@apollo/client": "^3.6.9",
+    "@datorama/akita": "^8.0.0",
+    "apollo-angular": "4.1.0",
+    "apollo-link": "^1.2.14",
+    "apollo-link-context": "^1.0.20",
+    "graphql": "^15.8.0",
+    "graphql-ws": "^6.0.7",
     "lodash": "^4.17.21",
     "moment": "^2.30.1",
     "rxjs": "~7.5.0",
     "tslib": "^2.3.0",
-    "zone.js": "~0.11.4",
-    "@apollo/client": "^3.0.0",
-    "graphql": "^y"
+    "zone.js": "~0.11.4"
   },
   "devDependencies": {
     "@angular-devkit/build-angular": "^14.2.13",
@@ -44,6 +47,6 @@
     "karma-coverage": "~2.2.0",
     "karma-jasmine": "~5.1.0",
     "karma-jasmine-html-reporter": "~2.0.0",
-    "typescript": "~4.7.2"
+    "typescript": "4.8.4"
   }
 }

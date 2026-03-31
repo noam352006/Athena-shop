@@ -1,33 +1,31 @@
-import { Component, } from '@angular/core';
+import { Component } from '@angular/core';
 import { FormArray, FormBuilder, FormControl, FormGroup } from '@angular/forms';
 import { distinctUntilChanged, Subject, take, takeUntil, tap } from 'rxjs';
 import { Brands } from 'src/app/shared/enums/brand.enum';
-import { Sizes } from 'src/app/shared/models/sizes';
 import { ShoeItemQuery } from 'src/app/shared/states/shoeItems/shoe-item.query';
 import { shoeItemService } from 'src/app/shared/states/shoeItems/shoe-item.service';
 
 @Component({
   selector: 'app-filter',
   templateUrl: './filter.component.html',
-  styleUrls: ['./filter.component.less']
+  styleUrls: ['./filter.component.less'],
 })
 export class FilterComponent {
-
-  sizes: number[] = Sizes;
-  currFilters$ = this.itemQuery.filters$
+  sizes: number[] = [3, 3.5, 4, 4.5, 5, 5.5, 6, 6.5, 7, 7.5, 8, 8.5];
+  currFilters$ = this.itemQuery.filters$;
   readonly brandArray: string[] = Object.values(Brands);
 
   chooseSize(chosenSize: number): void {
     this.currFilters$
       .pipe(
         take(1),
-        tap(f => {
-          if (f.size === chosenSize) {
+        tap((filter) => {
+          if (filter.size === chosenSize) {
             this.shoeService.updateFilter({ size: undefined });
           } else {
             this.shoeService.updateFilter({ size: chosenSize });
           }
-        })
+        }),
       )
       .subscribe();
   }
@@ -38,11 +36,13 @@ export class FilterComponent {
   constructor(
     private fb: FormBuilder,
     private shoeService: shoeItemService,
-    private itemQuery: ShoeItemQuery
+    private itemQuery: ShoeItemQuery,
   ) {
     this.form = this.fb.group({
       all: new FormControl(true),
-      selectedBrands: this.fb.array(this.brandArray.map(() => new FormControl(true)))
+      selectedBrands: this.fb.array(
+        this.brandArray.map(() => new FormControl(true)),
+      ),
     });
   }
 
@@ -52,11 +52,13 @@ export class FilterComponent {
 
   markCheckBox(): void {
     if (!this.form.get('all')?.value) {
-      this.selectedBrands.controls.forEach(ctrl =>
-        ctrl.setValue(true, { emitEvent: false }));
+      this.selectedBrands.controls.forEach((ctrl) =>
+        ctrl.setValue(true, { emitEvent: false }),
+      );
     } else {
-      this.selectedBrands.controls.forEach(ctrl =>
-        ctrl.setValue(false, { emitEvent: false }));
+      this.selectedBrands.controls.forEach((ctrl) =>
+        ctrl.setValue(false, { emitEvent: false }),
+      );
     }
   }
 
@@ -70,7 +72,7 @@ export class FilterComponent {
           const equals = arraysEqual(prevBrands, curBrands);
           return prev.all === curr.all && equals;
         }),
-        tap(formVal => {
+        tap((formVal) => {
           const allChecked = formVal.all as boolean;
           const brandsArray = formVal.selectedBrands as boolean[];
           if (allChecked && brandsArray.includes(false)) {
@@ -78,7 +80,7 @@ export class FilterComponent {
           }
         }),
         tap(() => this.syncFormToStore()),
-        takeUntil(this.destroy$)
+        takeUntil(this.destroy$),
       )
       .subscribe();
   }
@@ -86,21 +88,27 @@ export class FilterComponent {
   private syncFormToStore(): void {
     const allChecked = this.form.get('all')?.value;
     const selected = this.selectedBrands.value
-      .map((checked: boolean, i: number) => checked ? this.brandArray[i] : null)
+      .map((checked: boolean, i: number) =>
+        checked ? this.brandArray[i] : null,
+      )
       .filter((v: string | null) => v !== null) as string[];
 
-    const brandsToStore = allChecked ? undefined : selected.length ? selected : [];
+    const brandsToStore = allChecked
+      ? undefined
+      : selected.length
+        ? selected
+        : [];
     this.shoeService.updateFilter({ brands: brandsToStore });
   }
 
   // STORE → FORM
   private subscribeToStoreChanges(): void {
     this.itemQuery
-      .select(state => state.stateFilters.brands)
+      .select((state) => state.stateFilters.brands)
       .pipe(
         distinctUntilChanged((prev, curr) => arraysEqual(prev, curr)),
-        tap(brands => this.patchFormFromStore(brands)),
-        takeUntil(this.destroy$)
+        tap((brands) => this.patchFormFromStore(brands)),
+        takeUntil(this.destroy$),
       )
       .subscribe();
   }
@@ -110,8 +118,8 @@ export class FilterComponent {
 
     this.form.get('all')?.patchValue(allChecked, { emitEvent: false });
 
-    const newValues = this.brandArray.map(brand =>
-      allChecked ? true : brands?.includes(brand) ?? false
+    const newValues = this.brandArray.map((brand) =>
+      allChecked ? true : (brands?.includes(brand) ?? false),
     );
 
     this.selectedBrands.controls.forEach((ctrl, i) => {

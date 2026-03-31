@@ -1,44 +1,54 @@
 import { Injectable } from '@angular/core';
 import { AuthService } from 'src/app/shared/states/auth/auth.service';
-import { usersList } from 'src/app/shared/models/userList';
-import { User } from 'src/app/shared/intrefaces/user';
-import { UserRole } from 'src/app/shared/enums/userRole.enum';
 import { Router } from '@angular/router';
+import { firstValueFrom } from 'rxjs';
+import { partialUser } from 'src/app/shared/intrefaces/partialUser';
+import { UserQueries } from '../apollo.service/queries/user.queries';
 
 @Injectable({
-  providedIn: 'root'
+  providedIn: 'root',
 })
 export class LoginService {
+  constructor(
+    private authService: AuthService,
+    private router: Router,
+    private userQueries: UserQueries,
+  ) {}
 
-  constructor(private authService: AuthService, private router: Router) { }
-
-  doesNameExists(name: string): User | undefined {
-    return usersList.find(user => user.userName === name);
+  async doesNameExists(name: string): Promise<boolean> {
+    return (await this.userQueries.getUserByName(name)) ? true : false;
   }
 
-  logInUser(user: User): void {
-    this.authService.logIn(user);
-    const { password, ...displayedUser } = user;
-    localStorage.setItem('connectedUser', JSON.stringify(displayedUser));
-    this.router.navigate(['']);
+  // get user from db with password and user name
+  async getUserByCredentials(
+    password: string,
+    userName: string,
+  ): Promise<partialUser | null> {
+    let result: partialUser | null = null;
+
+    try {
+      result = await this.userQueries.getUserByCredentials(password, userName);
+    } catch (err) {
+      console.error(err);
+    }
+
+    return result;
   }
 
-  findUser(passwordInput: string, userNameInput: string): User | undefined {
-    return usersList.find(user => user.password === passwordInput && user.userName === userNameInput);
+  //if user exists log them in - initialize state
+  connectUser(user: partialUser): void {
+    if (user) {
+      this.authService.logIn(user);
+      localStorage.setItem('connectedUser', JSON.stringify(user));
+      this.router.navigate(['']);
+    }
   }
 
-  addUser(password: string, userName: string): void {
-    const newUser: User = {
-      id: crypto.randomUUID(),
-      userName: userName,
-      password: password,
-      role: UserRole.Client,
-      dateCreated: new Date(),
-      purchaseHistory: [],
-    };
-
-    usersList.push(newUser);
-    this.logInUser(newUser);
+  async signUp(password: string, userName: string): Promise<void> {
+    const newUser = await this.userQueries.insertUser(password, userName);
+    if (newUser) {
+      this.connectUser(newUser);
+    }
   }
 
   logOut(): void {

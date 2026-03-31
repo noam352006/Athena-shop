@@ -1,0 +1,118 @@
+import { Resolver, Query, Mutation, Args } from '@nestjs/graphql';
+import { BasicShoe } from './common/types/basic-shoe.type';
+import { ShoeItem } from './common/types/shoeItem.type';
+import { PartialUser } from './common/types/partialUser.type';
+import { BasicShoeService } from './common/graphqL/basic-shoe.service';
+import { ShoesService } from './common/graphqL/item.service';
+import { UserService } from './common/graphqL/user.service';
+
+@Resolver()
+export class AppResolver {
+  constructor(
+    private readonly basicShoeService: BasicShoeService,
+    private readonly itemService: ShoesService,
+    private readonly userService: UserService,
+  ) {}
+
+  //------BASIC SHOES---------------
+  @Query(() => [BasicShoe])
+  async getAllBasicShoes() {
+    try {
+      return await this.basicShoeService.getAllBasicShoes();
+    } catch (error) {
+      console.error('Error fetching basic shoes at getAllBasicShoes()', error);
+      throw error;
+    }
+  }
+
+  //------------SHOE ITEMS-----------
+  @Query(() => [ShoeItem])
+  async getAllShoeItems() {
+    try {
+      return await this.itemService.getAllShoeItems();
+    } catch (error) {
+      console.error('Error fetching shoes at getAllShoes()', error);
+      throw error;
+    }
+  }
+
+  @Query(() => [ShoeItem])
+  async getAllPurchases() {
+    try {
+      return await this.itemService.getAllPurchases();
+    } catch (error) {
+      console.error('Error fetching purchases at getAllPurchases()', error);
+      throw error;
+    }
+  }
+
+  @Mutation(() => Date, { nullable: true })
+  async purchaseItem(
+    @Args('userId') userId: string,
+    @Args('itemId') shoeId: string,
+  ) {
+    try {
+      const result = await this.itemService.purchaseItem(userId, shoeId);
+      return result ? new Date(result) : undefined;
+    } catch (error) {
+      console.error('Error purchasing item at purchaseItem()', error);
+      throw error;
+    }
+  }
+
+  //-----------USERS------------------
+  @Query(() => PartialUser, { nullable: true })
+  async getUserByCredentials(
+    @Args('userPassword') userPassword: string,
+    @Args('userName') userName: string,
+  ) {
+    try {
+      return await this.userService.getUserByCredentials(
+        userPassword,
+        userName,
+      );
+    } catch (error) {
+      console.error(
+        'Error fetching user by credentials at getUserByCredentials()',
+        error,
+      );
+      throw error;
+    }
+  }
+
+  @Query(() => PartialUser, { nullable: true })
+  async getUserByName(@Args('userName') userName: string) {
+    try {
+      return await this.userService.getUserByName(userName);
+    } catch (error) {
+      console.error('Error fetching user by name at getUserByName()', error);
+      throw error;
+    }
+  }
+
+  @Query(() => [String])
+  async getUserPurchasedBrands(@Args('user_id') userId: string) {
+    try {
+      return await this.userService.getUserPurchasedBrands(userId);
+    } catch (error) {
+      console.error(
+        'Error fetching purchased brands at getUserPurchasedBrands()',
+        error,
+      );
+      throw error;
+    }
+  }
+
+  @Mutation(() => PartialUser)
+  async signUserUp(
+    @Args('userPassword') userPassword: string,
+    @Args('userName') userName: string,
+  ) {
+    try {
+      return await this.userService.signUp(userPassword, userName);
+    } catch (error) {
+      console.error('Error inserting user at signUp()', error);
+      throw error;
+    }
+  }
+}

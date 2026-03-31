@@ -36,36 +36,36 @@ export class LoginPageComponent {
     this.view = false;
   }
 
-  loginUser(): void {
+  async loginUser(): Promise<void> {
     if (this.form.invalid) {
       this.loginError = "*please check that your fields are valid";
     } else {
-      const currUser = this.loginService.findUser(this.form.controls.password.value!, this.form.controls.userName.value!);
+      const currUser = await this.loginService.getUserByCredentials(this.form.controls.password.value!, this.form.controls.userName.value!);
       if (!currUser) {
         this.loginError = "*user name or password are incorrect";
       } else {
         this.isLoading = true;
-        setTimeout(() => this.loginService.logInUser(currUser), 2000);
+        setTimeout(() => this.loginService.connectUser(currUser), 2000);
 
       }
     }
   }
 
-  signUpUser(): void {
+  async signUpUser(): Promise<void> {
     if (this.form.invalid) {
       this.signUpError = "*please check that your fields are valid";
     } else {
       if (this.form.controls.password.value !== this.form.controls.passwordVerify.value) {
         this.signUpError = "*password verification failed";
       } else {
-        if (this.loginService.doesNameExists(this.form.controls.userName.value!)) {
+        if ( await this.loginService.doesNameExists(this.form.controls.userName.value!)) {
           this.signUpError =
             `*this user name already exists,
             please choose another`;
         } else {
           this.isLoading = true;
           setTimeout(() =>
-            this.loginService.addUser(this.form.controls.password.value!, this.form.controls.userName.value!)
+            this.loginService.signUp(this.form.controls.password.value!, this.form.controls.userName.value!)
             ,2000);
         }
       }
